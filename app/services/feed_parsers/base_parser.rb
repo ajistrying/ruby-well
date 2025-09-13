@@ -40,7 +40,7 @@ module FeedParsers
 
     def parse_date(date_string)
       return nil if date_string.blank?
-      
+
       begin
         case date_string
         when Time, DateTime, Date
@@ -66,17 +66,17 @@ module FeedParsers
 
     def fetch_content
       return @content if @content.present?
-      
+
       response = Faraday.new do |f|
         f.use Faraday::Retry::Middleware, max: 2
         f.adapter Faraday.default_adapter
-        f.headers['User-Agent'] = 'Ruby Feed Parser/1.0'
+        f.headers["User-Agent"] = "Ruby Feed Parser/1.0"
         f.options.timeout = 30
         f.options.open_timeout = 10
       end.get(@feed_url)
-      
+
       raise "HTTP Error: #{response.status}" unless response.success?
-      
+
       @content = response.body
     rescue Faraday::Error => e
       raise "Network error fetching feed: #{e.message}"

@@ -1,17 +1,17 @@
-require 'feedjira'
+require "feedjira"
 
 module FeedParsers
   class RssAtomParser < BaseParser
     def parse
       content = fetch_content
       parsed_feed = Feedjira.parse(content)
-      
+
       raise "Invalid feed format" unless parsed_feed.respond_to?(:entries)
-      
+
       entries = parsed_feed.entries.map do |entry|
         normalize_entry(extract_entry_data(entry))
       end
-      
+
       {
         title: parsed_feed.title,
         description: parsed_feed.respond_to?(:description) ? parsed_feed.description : nil,
@@ -84,7 +84,7 @@ module FeedParsers
       when String
         entry.author
       when Hash
-        entry.author[:name] || entry.author['name']
+        entry.author[:name] || entry.author["name"]
       else
         nil
       end
@@ -108,7 +108,7 @@ module FeedParsers
 
     def parse_duration(duration_string)
       return nil if duration_string.blank?
-      
+
       # Handle different duration formats (HH:MM:SS, MM:SS, or seconds)
       case duration_string.to_s
       when /^(\d+):(\d+):(\d+)$/

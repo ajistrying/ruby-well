@@ -1,28 +1,28 @@
-require 'nokogiri'
+require "nokogiri"
 
 module FeedParsers
   class SitemapParser < BaseParser
     def parse
       content = fetch_content
       doc = Nokogiri::XML(content)
-      
+
       # Remove namespaces for easier parsing
       doc.remove_namespaces!
-      
+
       # Try to find URLs with lastmod dates
       urls = extract_urls_from_sitemap(doc)
-      
+
       # Filter and sort by date, get recent entries
       recent_urls = urls
         .select { |u| u[:lastmod].present? }
         .sort_by { |u| u[:lastmod] }
         .reverse
         .first(20)
-      
+
       entries = recent_urls.map do |url_data|
         normalize_entry(url_data)
       end
-      
+
       {
         title: @feed&.name || "Sitemap Feed",
         description: @feed&.description,
@@ -39,22 +39,22 @@ module FeedParsers
 
     def extract_urls_from_sitemap(doc)
       urls = []
-      
+
       # Check if it's a sitemap index
-      if doc.xpath('//sitemapindex').any?
+      if doc.xpath("//sitemapindex").any?
         # It's a sitemap index, we'd need to fetch sub-sitemaps
         # For now, we'll skip these
         return []
       end
-      
+
       # Extract URLs from regular sitemap
-      doc.xpath('//url').each do |url_node|
-        loc = url_node.xpath('loc').text
-        lastmod = url_node.xpath('lastmod').text
-        
+      doc.xpath("//url").each do |url_node|
+        loc = url_node.xpath("loc").text
+        lastmod = url_node.xpath("lastmod").text
+
         # Try to filter for blog/article URLs
         next unless looks_like_article?(loc)
-        
+
         urls << {
           title: extract_title_from_url(loc),
           url: loc,
@@ -68,7 +68,7 @@ module FeedParsers
           lastmod: parse_date(lastmod)
         }
       end
-      
+
       urls
     end
 
@@ -83,18 +83,18 @@ module FeedParsers
       # Extract a rough title from URL slug
       uri = URI.parse(url)
       path = uri.path
-      
+
       # Get the last segment
-      slug = path.split('/').last
+      slug = path.split("/").last
       return "Article" if slug.blank?
-      
+
       # Convert slug to title
       slug
-        .gsub(/[-_]/, ' ')
-        .gsub(/\.html?$/i, '')
+        .gsub(/[-_]/, " ")
+        .gsub(/\.html?$/i, "")
         .split
         .map(&:capitalize)
-        .join(' ')
+        .join(" ")
     rescue
       "Article"
     end

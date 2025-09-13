@@ -5,17 +5,17 @@ class ProcessOpmlFeeds
     context.created_feeds = []
     context.skipped_feeds = []
     context.failed_feeds = []
-    
+
     context.feeds_data.each do |feed_data|
       result = CreateFeedFromOpml.call(feed_data: feed_data)
-      
+
       if result.success?
         if result.created
           context.created_feeds << result.feed
         elsif result.skipped
-          context.skipped_feeds << { 
+          context.skipped_feeds << {
             feed: result.feed,
-            message: result.message 
+            message: result.message
           }
         end
       else
@@ -25,7 +25,7 @@ class ProcessOpmlFeeds
         }
       end
     end
-    
+
     # Set summary statistics
     context.stats = {
       total: context.feeds_data.size,
@@ -33,7 +33,7 @@ class ProcessOpmlFeeds
       skipped: context.skipped_feeds.size,
       failed: context.failed_feeds.size
     }
-    
+
     generate_import_report
   end
 
@@ -49,7 +49,7 @@ class ProcessOpmlFeeds
     report << "Skipped (already exist): #{context.stats[:skipped]}"
     report << "Failed: #{context.stats[:failed]}"
     report << ""
-    
+
     if context.created_feeds.any?
       report << "Created Feeds:"
       report << "-" * 40
@@ -59,7 +59,7 @@ class ProcessOpmlFeeds
       end
       report << ""
     end
-    
+
     if context.skipped_feeds.any?
       report << "Skipped Feeds:"
       report << "-" * 40
@@ -68,7 +68,7 @@ class ProcessOpmlFeeds
       end
       report << ""
     end
-    
+
     if context.failed_feeds.any?
       report << "Failed Feeds:"
       report << "-" * 40
@@ -78,7 +78,7 @@ class ProcessOpmlFeeds
       end
       report << ""
     end
-    
+
     context.import_report = report.join("\n")
   end
 end

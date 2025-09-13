@@ -13,7 +13,7 @@ module FeedParsers
     rescue => e
       # Log the error with the specific parser that failed
       Rails.logger.error "Feed parsing failed for #{feed_url}: #{e.message}"
-      
+
       # Try fallback parsers if primary fails
       fallback_parse
     end
@@ -42,14 +42,14 @@ module FeedParsers
         WordpressJsonParser,
         SitemapParser
       ]
-      
+
       errors = []
-      
+
       parsers.each do |parser_class|
         begin
           parser = parser_class.new(@feed_url, nil, @feed)
           result = parser.parse
-          
+
           # If we got some entries, consider it successful
           return result if result[:entries].present?
         rescue => e
@@ -57,7 +57,7 @@ module FeedParsers
           next
         end
       end
-      
+
       # If all parsers failed, raise an error with details
       raise "All parsers failed for #{@feed_url}:\n#{errors.join("\n")}"
     end

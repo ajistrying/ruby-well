@@ -3,7 +3,7 @@ class UpdateFeedStatus
 
   def call
     validate_inputs!
-    
+
     if context.success
       handle_success
     else
@@ -26,19 +26,19 @@ class UpdateFeedStatus
       fetch_failures: 0,
       error_message: nil
     }
-    
+
     # Update feed metadata if available
     if context.feed_metadata.present?
       updates[:description] = context.feed_metadata[:description] if context.feed_metadata[:description].present?
-      
+
       # Update URL if it's missing and we got one from the feed
       if context.feed.url.blank? && context.feed_metadata[:url].present?
         updates[:url] = context.feed_metadata[:url]
       end
     end
-    
+
     context.feed.update!(updates)
-    
+
     log_success_metrics
   end
 
@@ -48,13 +48,13 @@ class UpdateFeedStatus
       fetch_failures: context.feed.fetch_failures + 1,
       error_message: context.error || "Unknown error"
     )
-    
+
     # Deactivate feed after too many failures
     if context.feed.fetch_failures >= 5
       context.feed.update!(active: false)
       Rails.logger.warn "Feed #{context.feed.name} deactivated after 5 consecutive failures"
     end
-    
+
     log_failure_metrics
   end
 

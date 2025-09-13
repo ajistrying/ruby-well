@@ -5,13 +5,13 @@ class ProcessFeedEntries
     context.created_entries = []
     context.skipped_entries = []
     context.failed_entries = []
-    
+
     context.entries_data.each do |entry_data|
       result = CreateEntryFromFeed.call(
         feed: context.feed,
         entry_data: entry_data
       )
-      
+
       if result.success?
         if result.created
           context.created_entries << result.entry
@@ -28,7 +28,7 @@ class ProcessFeedEntries
         }
       end
     end
-    
+
     # Set statistics
     context.stats = {
       total: context.entries_data.size,
@@ -36,7 +36,7 @@ class ProcessFeedEntries
       skipped: context.skipped_entries.size,
       failed: context.failed_entries.size
     }
-    
+
     # Mark as successful even if some entries failed
     # (partial success is still success for feed fetching)
     context.success = true

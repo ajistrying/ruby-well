@@ -3,14 +3,14 @@ class CreateEntryFromFeed
 
   def call
     validate_inputs!
-    
+
     # Check for duplicate entry
     if duplicate_entry_exists?
       context.skipped = true
       context.message = "Entry already exists: #{context.entry_data[:title]}"
       return
     end
-    
+
     # Create new entry
     entry = context.feed.entries.build(
       title: context.entry_data[:title],
@@ -25,7 +25,7 @@ class CreateEntryFromFeed
       entry_type: determine_entry_type,
       processed: false
     )
-    
+
     if entry.save
       context.entry = entry
       context.created = true
@@ -44,11 +44,11 @@ class CreateEntryFromFeed
     unless context.feed.present?
       context.fail!(error: "Feed is required")
     end
-    
+
     unless context.entry_data.present?
       context.fail!(error: "Entry data is required")
     end
-    
+
     unless context.entry_data[:title].present? && context.entry_data[:url].present?
       context.fail!(error: "Entry must have title and URL")
     end
@@ -59,11 +59,11 @@ class CreateEntryFromFeed
     if context.entry_data[:guid].present?
       return context.feed.entries.exists?(guid: context.entry_data[:guid])
     end
-    
+
     # Fallback to URL + published_at combination
     if context.entry_data[:url].present?
       existing = context.feed.entries.where(url: context.entry_data[:url])
-      
+
       if context.entry_data[:published_at].present?
         # Check for same URL and published date (within 1 hour tolerance)
         published_at = context.entry_data[:published_at]
@@ -71,30 +71,30 @@ class CreateEntryFromFeed
           published_at: (published_at - 1.hour)..(published_at + 1.hour)
         )
       end
-      
+
       return existing.exists?
     end
-    
+
     false
   end
 
   def determine_entry_type
     # Check if feed is a podcast
     if context.feed.podcast?
-      return 'podcast'
+      return "podcast"
     end
-    
+
     # Check for podcast indicators in entry
     if context.entry_data[:enclosure_url].present? || context.entry_data[:duration].present?
-      return 'podcast'
+      return "podcast"
     end
-    
+
     # Check for video indicators
     if context.entry_data[:url]&.match?(/youtube|vimeo|video/i)
-      return 'video'
+      return "video"
     end
-    
+
     # Default to article
-    'article'
+    "article"
   end
 end

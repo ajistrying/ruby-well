@@ -40,34 +40,34 @@ gem "kamal", require: false
 gem "thruster", require: false
 
 # RSS/Atom feed parsing
-gem 'feedjira'
+gem "feedjira"
 
 # HTTP requests (for fetching feeds)
-gem 'faraday'
-gem 'faraday-retry'  # Auto-retry failed requests
+gem "faraday"
+gem "faraday-retry"  # Auto-retry failed requests
 
 # HTML content cleaning
-gem 'loofah'  # Better than basic regex for HTML cleaning
+gem "loofah"  # Better than basic regex for HTML cleaning
 
 # OpenAI API for embeddings and AI processing
-gem 'ruby-openai'
+gem "ruby-openai"
 
 # langchain
-gem 'langchainrb', '~> 0.19.5'
+gem "langchainrb", "~> 0.19.5"
 
 # HTTP client for API calls
-gem 'httparty'
+gem "httparty"
 
 # Pagination for large result sets
-gem 'kaminari'
+gem "kaminari"
 
 # Rate limiting (to be nice to RSS feeds)
-gem 'rack-attack'
+gem "rack-attack"
 
 # Background jobs
-gem 'sidekiq'
-gem 'sidekiq-cron'
-gem 'redis'
+gem "sidekiq"
+gem "sidekiq-cron"
+gem "redis"
 
 # Interactor
 gem "interactor", "~> 3.0"
@@ -87,7 +87,7 @@ end
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
-  gem 'better_errors'
+  gem "better_errors"
 end
 
 group :test do

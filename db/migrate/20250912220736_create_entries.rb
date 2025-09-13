@@ -19,7 +19,7 @@ class CreateEntries < ActiveRecord::Migration[8.0]
 
     add_index :entries, :published_at
     add_index :entries, :guid, unique: true
-    add_index :entries, [:feed_id, :published_at]
+    add_index :entries, [ :feed_id, :published_at ]
     add_index :entries, :processed
     add_index :entries, :entry_type
   end
