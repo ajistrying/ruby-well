@@ -1,0 +1,21 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  url: MyString
+  feed_url: MyString
+  category: MyString
+  description: MyText
+  last_fetched_at: 2025-09-12 18:07:35
+  fetch_interval: 1
+  active: false
+
+two:
+  name: MyString
+  url: MyString
+  feed_url: MyString
+  category: MyString
+  description: MyText
+  last_fetched_at: 2025-09-12 18:07:35
+  fetch_interval: 1
+  active: false
