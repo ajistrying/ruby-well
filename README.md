@@ -1,4 +1,4 @@
-# RubyWell 💎
+# RubyWell
 
 **A comprehensive Ruby content aggregator that brings together the best of the Ruby community in one searchable place.**
 
