@@ -1,0 +1,39 @@
+{
+  "ignored_warnings": [
+    {
+      "warning_type": "Cross-Site Scripting",
+      "warning_code": 4,
+      "fingerprint": "45247b7099286931f6a779946fd2954b5d9c8ab52e1e9c4d887424e9ae6f3ea6",
+      "check_name": "LinkToHref",
+      "message": "Potentially unsafe model attribute in `link_to` href",
+      "file": "app/views/entries/show.html.erb",
+      "line": 117,
+      "link": "https://brakemanscanner.org/docs/warning_types/link_to_href",
+      "code": "link_to(Entry.find(params[:id]).url, :target => \"_blank\", :rel => \"noopener\", :class => \"btn btn-primary\")",
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "EntriesController",
+          "method": "show",
+          "line": 18,
+          "file": "app/controllers/entries_controller.rb",
+          "rendered": {
+            "name": "entries/show",
+            "file": "app/views/entries/show.html.erb"
+          }
+        }
+      ],
+      "location": {
+        "type": "template",
+        "template": "entries/show"
+      },
+      "user_input": "Entry.find(params[:id]).url",
+      "confidence": "Weak",
+      "cwe_id": [
+        79
+      ],
+      "note": ""
+    }
+  ],
+  "brakeman_version": "7.1.0"
+}
