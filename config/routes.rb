@@ -11,12 +11,12 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   root "pages#home"
-  
-  resources :entries, only: [:index, :show] do
+
+  resources :entries, only: [ :index, :show ] do
     collection do
       get :search
     end
   end
-  
-  resources :feedback, only: [:new, :create]
+
+  resources :feedback, only: [ :new, :create ]
 end

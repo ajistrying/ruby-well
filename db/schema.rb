@@ -28,12 +28,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_13_013941) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "enclosure_url"
-    t.index ["entry_type"], name: "index_entries_on_entry_type"
-    t.index ["feed_id", "published_at"], name: "index_entries_on_feed_id_and_published_at"
-    t.index ["feed_id"], name: "index_entries_on_feed_id"
-    t.index ["guid"], name: "index_entries_on_guid", unique: true
-    t.index ["processed"], name: "index_entries_on_processed"
-    t.index ["published_at"], name: "index_entries_on_published_at"
+    t.index [ "entry_type" ], name: "index_entries_on_entry_type"
+    t.index [ "feed_id", "published_at" ], name: "index_entries_on_feed_id_and_published_at"
+    t.index [ "feed_id" ], name: "index_entries_on_feed_id"
+    t.index [ "guid" ], name: "index_entries_on_guid", unique: true
+    t.index [ "processed" ], name: "index_entries_on_processed"
+    t.index [ "published_at" ], name: "index_entries_on_published_at"
   end
 
   create_table "feeds", force: :cascade do |t|
@@ -50,10 +50,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_13_013941) do
     t.text "error_message"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["active"], name: "index_feeds_on_active"
-    t.index ["category"], name: "index_feeds_on_category"
-    t.index ["feed_url"], name: "index_feeds_on_feed_url", unique: true
-    t.index ["last_fetched_at"], name: "index_feeds_on_last_fetched_at"
+    t.index [ "active" ], name: "index_feeds_on_active"
+    t.index [ "category" ], name: "index_feeds_on_category"
+    t.index [ "feed_url" ], name: "index_feeds_on_feed_url", unique: true
+    t.index [ "last_fetched_at" ], name: "index_feeds_on_last_fetched_at"
   end
 
   add_foreign_key "entries", "feeds"

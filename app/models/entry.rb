@@ -1,10 +1,10 @@
 class Entry < ApplicationRecord
-  searchkick text_middle: [:title, :summary, :content, :author],
-             word_start: [:title, :author],
-             highlight: [:title, :summary],
-             searchable: [:title, :summary, :content, :author, :tags],
-             filterable: [:entry_type, :published_at, :feed_id]
-  
+  searchkick text_middle: [ :title, :summary, :content, :author ],
+             word_start: [ :title, :author ],
+             highlight: [ :title, :summary ],
+             searchable: [ :title, :summary, :content, :author, :tags ],
+             filterable: [ :entry_type, :published_at, :feed_id ]
+
   belongs_to :feed
 
   validates :title, presence: true
