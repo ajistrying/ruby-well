@@ -3,7 +3,13 @@
   <div class="modal-box max-w-2xl" onclick="event.stopPropagation()">
     <h3 class="font-bold text-lg mb-4">Share Your Feedback</h3>
     
-    <%= render "feedback/form", feedback: Feedback.new %>
+    <% if defined?(Feedback) %>
+      <%= render "feedbacks/form", feedback: Feedback.new %>
+    <% else %>
+      <div class="alert alert-info">
+        <span>Feedback system is being set up. Please check back later.</span>
+      </div>
+    <% end %>
   </div>
   <form method="dialog" class="modal-backdrop">
     <button>close</button>

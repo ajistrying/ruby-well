@@ -1,4 +1,4 @@
-class FeedbackController < ApplicationController
+class FeedbacksController < ApplicationController
   def new
     @feedback = Feedback.new
 
@@ -23,7 +23,7 @@ class FeedbackController < ApplicationController
         format.turbo_stream {
           render turbo_stream: [
             turbo_stream.replace("feedback_form",
-              partial: "feedback/success",
+              partial: "feedbacks/success",
               locals: { feedback: @feedback }
             ),
             turbo_stream.prepend("notifications",
@@ -42,7 +42,7 @@ class FeedbackController < ApplicationController
         format.turbo_stream {
           render turbo_stream: turbo_stream.replace(
             "feedback_form",
-            partial: "feedback/form",
+            partial: "feedbacks/form",
             locals: { feedback: @feedback }
           )
         }
