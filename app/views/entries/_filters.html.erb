@@ -1,0 +1,93 @@
+<!-- Entry Type Filter -->
+<div class="mb-6">
+  <h4 class="font-semibold mb-2 text-sm">Content Type</h4>
+  <div class="space-y-1">
+    <% entry_types = facets[:entry_types] || {} %>
+    <% [["article", "Articles"], ["podcast", "Podcasts"], ["video", "Videos"]].each do |value, label| %>
+      <% count = entry_types[value] || 0 %>
+      <%= link_to entries_path(params.permit(:query, :feed_category).merge(entry_type: value)),
+          class: "flex justify-between items-center p-2 rounded hover:bg-base-200 text-sm #{'bg-base-200' if params[:entry_type] == value}",
+          data: { turbo_frame: "search_results" } do %>
+        <span><%= label %></span>
+        <span class="badge badge-sm"><%= count %></span>
+      <% end %>
+    <% end %>
+    
+    <% if params[:entry_type].present? %>
+      <%= link_to entries_path(params.permit(:query, :feed_category)),
+          class: "text-xs link link-hover mt-2 block",
+          data: { turbo_frame: "search_results" } do %>
+        Clear type filter
+      <% end %>
+    <% end %>
+  </div>
+</div>
+
+<!-- Feed Category Filter -->
+<div class="mb-6">
+  <h4 class="font-semibold mb-2 text-sm">Source Category</h4>
+  <div class="space-y-1">
+    <% categories = facets[:feed_categories] || {} %>
+    <% [
+      ["personal", "Personal Blogs"],
+      ["company", "Company Blogs"],
+      ["community", "Community"],
+      ["newsletter", "Newsletters"],
+      ["podcast", "Podcasts"]
+    ].each do |value, label| %>
+      <% count = categories[value] || 0 %>
+      <%= link_to entries_path(params.permit(:query, :entry_type).merge(feed_category: value)),
+          class: "flex justify-between items-center p-2 rounded hover:bg-base-200 text-sm #{'bg-base-200' if params[:feed_category] == value}",
+          data: { turbo_frame: "search_results" } do %>
+        <span><%= label %></span>
+        <span class="badge badge-sm"><%= count %></span>
+      <% end %>
+    <% end %>
+    
+    <% if params[:feed_category].present? %>
+      <%= link_to entries_path(params.permit(:query, :entry_type)),
+          class: "text-xs link link-hover mt-2 block",
+          data: { turbo_frame: "search_results" } do %>
+        Clear category filter
+      <% end %>
+    <% end %>
+  </div>
+</div>
+
+<!-- Date Range Quick Filters -->
+<div class="mb-6">
+  <h4 class="font-semibold mb-2 text-sm">Published</h4>
+  <div class="space-y-1">
+    <% [
+      ["Today", 0.days.ago.to_date],
+      ["This Week", 7.days.ago.to_date],
+      ["This Month", 30.days.ago.to_date],
+      ["This Year", 365.days.ago.to_date]
+    ].each do |label, date_from| %>
+      <%= link_to entries_path(params.permit(:query, :entry_type, :feed_category).merge(date_from: date_from)),
+          class: "block p-2 rounded hover:bg-base-200 text-sm #{'bg-base-200' if params[:date_from] == date_from.to_s}",
+          data: { turbo_frame: "search_results" } do %>
+        <%= label %>
+      <% end %>
+    <% end %>
+    
+    <% if params[:date_from].present? || params[:date_to].present? %>
+      <%= link_to entries_path(params.permit(:query, :entry_type, :feed_category)),
+          class: "text-xs link link-hover mt-2 block",
+          data: { turbo_frame: "search_results" } do %>
+        Clear date filter
+      <% end %>
+    <% end %>
+  </div>
+</div>
+
+<!-- Clear All Filters -->
+<% if params[:entry_type].present? || params[:feed_category].present? || params[:date_from].present? || params[:date_to].present? %>
+  <div class="pt-4 border-t">
+    <%= link_to entries_path(query: params[:query]),
+        class: "btn btn-ghost btn-sm w-full",
+        data: { turbo_frame: "search_results" } do %>
+      Clear All Filters
+    <% end %>
+  </div>
+<% end %>

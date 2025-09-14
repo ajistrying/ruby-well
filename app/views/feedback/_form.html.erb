@@ -1,0 +1,95 @@
+<div id="feedback_form">
+  <%= form_with model: feedback, local: false, 
+                data: { turbo_frame: "_top" },
+                class: "space-y-4" do |f| %>
+    
+    <% if feedback.errors.any? %>
+      <div class="alert alert-error">
+        <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <div>
+          <h3 class="font-bold">Please fix the following errors:</h3>
+          <ul class="mt-2 list-disc list-inside text-sm">
+            <% feedback.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    <% end %>
+    
+    <div class="form-control">
+      <%= f.label :feedback_type, class: "label" do %>
+        <span class="label-text">What would you like to share?</span>
+      <% end %>
+      <%= f.select :feedback_type,
+          options_for_select([
+            ["Request a New Feature", "feature_request"],
+            ["Add a New Feed/Blog", "new_feed"],
+            ["Report a Bug", "bug_report"],
+            ["Other Feedback", "other"]
+          ], feedback.feedback_type),
+          { prompt: "Select feedback type..." },
+          class: "select select-bordered w-full",
+          required: true %>
+    </div>
+    
+    <div class="form-control">
+      <%= f.label :title, class: "label" do %>
+        <span class="label-text">Title</span>
+      <% end %>
+      <%= f.text_field :title,
+          placeholder: "Brief summary of your feedback",
+          class: "input input-bordered w-full",
+          required: true,
+          maxlength: 200 %>
+    </div>
+    
+    <div class="form-control">
+      <%= f.label :description, class: "label" do %>
+        <span class="label-text">Description</span>
+      <% end %>
+      <%= f.text_area :description,
+          placeholder: "Please provide details about your feedback...",
+          class: "textarea textarea-bordered h-32",
+          required: true,
+          maxlength: 2000 %>
+      <label class="label">
+        <span class="label-text-alt">Be as detailed as possible</span>
+      </label>
+    </div>
+    
+    <div class="form-control" data-controller="conditional"
+         data-conditional-field-value="feedback_type"
+         data-conditional-show-value="new_feed">
+      <%= f.label :feed_url, class: "label" do %>
+        <span class="label-text">Feed URL (for new feed requests)</span>
+      <% end %>
+      <%= f.text_field :feed_url,
+          placeholder: "https://example.com/feed.xml",
+          class: "input input-bordered w-full" %>
+    </div>
+    
+    <div class="form-control">
+      <%= f.label :email, class: "label" do %>
+        <span class="label-text">Email (optional)</span>
+      <% end %>
+      <%= f.email_field :email,
+          placeholder: "your@email.com (if you'd like updates)",
+          class: "input input-bordered w-full" %>
+      <label class="label">
+        <span class="label-text-alt">We'll only use this to update you about your feedback</span>
+      </label>
+    </div>
+    
+    <div class="modal-action">
+      <button type="button" 
+              class="btn btn-ghost"
+              onclick="document.getElementById('modal_feedback').close()">
+        Cancel
+      </button>
+      <%= f.submit "Submit Feedback", class: "btn btn-primary" %>
+    </div>
+  <% end %>
+</div>

@@ -1,1 +1,27 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  .entry-card {
+    @apply card bg-base-100 shadow-sm hover:shadow-md transition-shadow duration-200;
+  }
+  
+  .entry-type-badge {
+    @apply badge badge-sm font-medium;
+  }
+  
+  .search-input {
+    @apply input input-bordered w-full text-lg;
+  }
+  
+  .hero-gradient {
+    @apply bg-gradient-to-br from-ruby-red/10 to-rails-red/10;
+  }
+}

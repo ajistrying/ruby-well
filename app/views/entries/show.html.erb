@@ -1,0 +1,200 @@
+<div class="container mx-auto px-4 py-8 max-w-6xl">
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Main Content -->
+    <div class="lg:col-span-2">
+      <div class="card bg-base-100 shadow-lg">
+        <div class="card-body">
+          <!-- Back Button -->
+          <%= link_to entries_path, class: "btn btn-ghost btn-sm mb-4 w-fit" do %>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Back to Search
+          <% end %>
+          
+          <!-- Entry Type Badge -->
+          <div class="mb-4">
+            <span class="badge badge-lg 
+              <%= 'badge-primary' if @entry.article? %>
+              <%= 'badge-secondary' if @entry.podcast? %>
+              <%= 'badge-accent' if @entry.video? %>">
+              <%= @entry.entry_type.capitalize %>
+            </span>
+            <% if @entry.formatted_duration.present? %>
+              <span class="badge badge-lg badge-ghost ml-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <%= @entry.formatted_duration %>
+              </span>
+            <% end %>
+          </div>
+          
+          <!-- Title -->
+          <h1 class="text-3xl font-bold mb-4"><%= @entry.title %></h1>
+          
+          <!-- Metadata -->
+          <div class="flex flex-wrap gap-4 mb-6 text-sm text-gray-600">
+            <div class="flex items-center gap-1">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z" />
+              </svg>
+              <%= @entry.feed.name %>
+            </div>
+            
+            <% if @entry.author.present? %>
+              <div class="flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                <%= @entry.author %>
+              </div>
+            <% end %>
+            
+            <div class="flex items-center gap-1">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <%= @entry.published_at.strftime("%B %d, %Y") %>
+              (<%= time_ago_in_words(@entry.published_at) %> ago)
+            </div>
+          </div>
+          
+          <!-- Tags -->
+          <% if @entry.tag_list.any? %>
+            <div class="flex flex-wrap gap-2 mb-6">
+              <% @entry.tag_list.each do |tag| %>
+                <%= link_to entries_path(query: tag),
+                    class: "badge badge-outline hover:badge-primary cursor-pointer" do %>
+                  <%= tag %>
+                <% end %>
+              <% end %>
+            </div>
+          <% end %>
+          
+          <!-- Summary -->
+          <% if @entry.summary.present? %>
+            <div class="alert alert-info mb-6">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <div>
+                <h3 class="font-bold">Summary</h3>
+                <div class="text-sm"><%= @entry.summary %></div>
+              </div>
+            </div>
+          <% end %>
+          
+          <!-- Content Preview -->
+          <% if @entry.content.present? %>
+            <div class="prose max-w-none mb-6">
+              <h3 class="text-lg font-semibold mb-3">Content Preview</h3>
+              <div class="bg-base-200 p-4 rounded-lg">
+                <%= simple_format(truncate(strip_tags(@entry.content), length: 1000)) %>
+              </div>
+            </div>
+          <% end %>
+          
+          <!-- Podcast/Video Player Placeholder -->
+          <% if @entry.enclosure_url.present? && (@entry.podcast? || @entry.video?) %>
+            <div class="mb-6">
+              <h3 class="text-lg font-semibold mb-3">Media</h3>
+              <div class="alert">
+                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>
+                  <%= @entry.podcast? ? "Podcast" : "Video" %> available at the source.
+                  Click "View Original" to listen/watch.
+                </span>
+              </div>
+            </div>
+          <% end %>
+          
+          <!-- Actions -->
+          <div class="flex gap-4">
+            <%= link_to @entry.url,
+                target: "_blank",
+                rel: "noopener",
+                class: "btn btn-primary" do %>
+              View Original
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+            <% end %>
+            
+            <button class="btn btn-ghost" 
+                    data-controller="share"
+                    data-action="click->share#copyLink"
+                    data-share-url-value="<%= entry_url(@entry) %>">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m9.032 4.026a3 3 0 10-5.432 0m5.432 0a3 3 0 00-5.432 0M6.316 13.342a3 3 0 10.0-2.684" />
+              </svg>
+              Share
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Sidebar -->
+    <div class="lg:col-span-1">
+      <!-- Feed Information -->
+      <div class="card bg-base-100 shadow-sm mb-6">
+        <div class="card-body">
+          <h3 class="font-bold mb-4">About the Source</h3>
+          
+          <div class="space-y-3">
+            <div>
+              <p class="text-sm text-gray-600">Feed</p>
+              <p class="font-medium"><%= @entry.feed.name %></p>
+            </div>
+            
+            <div>
+              <p class="text-sm text-gray-600">Category</p>
+              <p class="font-medium"><%= @entry.feed.category.capitalize %></p>
+            </div>
+            
+            <% if @entry.feed.description.present? %>
+              <div>
+                <p class="text-sm text-gray-600">Description</p>
+                <p class="text-sm"><%= truncate(@entry.feed.description, length: 150) %></p>
+              </div>
+            <% end %>
+            
+            <div class="pt-3">
+              <%= link_to entries_path(feed_category: @entry.feed.category),
+                  class: "btn btn-sm btn-outline w-full" do %>
+                Browse <%= @entry.feed.category.capitalize %> Feeds
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Related Entries -->
+      <% if @related_entries.any? %>
+        <div class="card bg-base-100 shadow-sm">
+          <div class="card-body">
+            <h3 class="font-bold mb-4">Related Entries</h3>
+            
+            <div class="space-y-3">
+              <% @related_entries.each do |related| %>
+                <div class="border-l-2 border-primary pl-3">
+                  <%= link_to related.title,
+                      entry_path(related),
+                      class: "text-sm font-medium link link-hover block mb-1" %>
+                  <p class="text-xs text-gray-600">
+                    <%= related.feed.name %> • 
+                    <%= time_ago_in_words(related.published_at) %> ago
+                  </p>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

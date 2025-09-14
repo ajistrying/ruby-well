@@ -61,6 +61,9 @@ gem "httparty"
 # Pagination for large result sets
 gem "kaminari"
 
+# Full text search with Elasticsearch
+gem "searchkick"
+
 # Rate limiting (to be nice to RSS feeds)
 gem "rack-attack"
 

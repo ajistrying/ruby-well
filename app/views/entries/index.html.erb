@@ -1,0 +1,92 @@
+<div class="container mx-auto px-4 py-8">
+  <!-- Search Header -->
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold mb-4">
+      <% if params[:query].present? %>
+        Search Results for "<%= params[:query] %>"
+      <% else %>
+        Browse All Entries
+      <% end %>
+    </h1>
+    
+    <!-- Search Form -->
+    <div class="card bg-base-100 shadow-sm">
+      <div class="card-body">
+        <%= render "search_form" %>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Main Content Area with Sidebar -->
+  <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+    <!-- Sidebar Facets -->
+    <aside class="lg:col-span-1">
+      <div class="card bg-base-100 shadow-sm sticky top-4">
+        <div class="card-body">
+          <h3 class="font-bold mb-4">Filter Results</h3>
+          
+          <%= render "filters", facets: @facets %>
+        </div>
+      </div>
+    </aside>
+    
+    <!-- Search Results -->
+    <div class="lg:col-span-3">
+      <turbo-frame id="search_results">
+        <% if @entries.any? %>
+          <!-- Results Count -->
+          <div class="mb-4 text-sm text-gray-600">
+            Found <%= number_with_delimiter(@entries.total_count) %> 
+            <%= "result".pluralize(@entries.total_count) %>
+          </div>
+          
+          <!-- Entry Cards -->
+          <div class="space-y-4">
+            <% @entries.each do |entry| %>
+              <%= render "entry_card", entry: entry %>
+            <% end %>
+          </div>
+          
+          <!-- Pagination -->
+          <div class="mt-8">
+            <%= paginate @entries, 
+                theme: 'daisy',
+                window: 2,
+                outer_window: 1 %>
+          </div>
+        <% else %>
+          <!-- No Results -->
+          <div class="card bg-base-100 shadow-sm">
+            <div class="card-body text-center py-12">
+              <div class="text-6xl mb-4">🔍</div>
+              <h3 class="text-xl font-semibold mb-2">No results found</h3>
+              <p class="text-gray-600 mb-6">
+                <% if params[:query].present? %>
+                  We couldn't find any entries matching "<%= params[:query] %>"
+                <% else %>
+                  No entries available with the current filters.
+                <% end %>
+              </p>
+              
+              <div class="space-y-2">
+                <p class="text-sm">Try:</p>
+                <ul class="text-sm text-left max-w-md mx-auto list-disc list-inside">
+                  <li>Using different keywords</li>
+                  <li>Checking your spelling</li>
+                  <li>Using more general terms</li>
+                  <li>Removing some filters</li>
+                </ul>
+              </div>
+              
+              <div class="mt-6">
+                <%= link_to "Browse All Entries", entries_path, 
+                    class: "btn btn-primary",
+                    data: { turbo_frame: "_top" } %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </turbo-frame>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,133 @@
+<div class="card bg-base-100 shadow-sm hover:shadow-md transition-shadow entry-card">
+  <div class="card-body">
+    <div class="flex items-start gap-4">
+      <!-- Entry Type Icon -->
+      <div class="flex-shrink-0">
+        <% if entry.podcast? %>
+          <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+            </svg>
+          </div>
+        <% elsif entry.video? %>
+          <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+            </svg>
+          </div>
+        <% else %>
+          <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            </svg>
+          </div>
+        <% end %>
+      </div>
+      
+      <!-- Entry Content -->
+      <div class="flex-1">
+        <!-- Title -->
+        <h3 class="card-title text-lg">
+          <%= link_to entry.url, 
+              target: "_blank",
+              rel: "noopener",
+              class: "link link-hover",
+              data: { 
+                controller: "track",
+                action: "click->track#recordClick",
+                track_entry_id_value: entry.id
+              } do %>
+            <% if defined?(@search_service) && @search_service.query.present? && entry.try(:highlight) %>
+              <%= raw(entry.highlight(:title)&.first || entry.title) %>
+            <% else %>
+              <%= entry.title %>
+            <% end %>
+          <% end %>
+        </h3>
+        
+        <!-- Summary/Content Preview -->
+        <% if entry.summary.present? || entry.content.present? %>
+          <p class="text-sm text-gray-600 mt-2">
+            <% if defined?(@search_service) && @search_service.query.present? && entry.try(:highlight) %>
+              <%= raw(entry.highlight(:summary)&.first || entry.highlight(:content)&.first || entry.content_preview) %>
+            <% else %>
+              <%= entry.content_preview %>
+            <% end %>
+          </p>
+        <% end %>
+        
+        <!-- Metadata -->
+        <div class="flex flex-wrap items-center gap-x-4 gap-y-2 mt-3 text-xs text-gray-500">
+          <!-- Entry Type Badge -->
+          <span class="badge badge-ghost badge-sm">
+            <%= entry.entry_type.capitalize %>
+          </span>
+          
+          <!-- Duration for podcasts/videos -->
+          <% if entry.formatted_duration.present? %>
+            <span class="flex items-center gap-1">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <%= entry.formatted_duration %>
+            </span>
+          <% end %>
+          
+          <!-- Feed Name -->
+          <span class="flex items-center gap-1">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z" />
+            </svg>
+            <%= entry.feed.name %>
+          </span>
+          
+          <!-- Author if present -->
+          <% if entry.author.present? %>
+            <span class="flex items-center gap-1">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+              <%= entry.author %>
+            </span>
+          <% end %>
+          
+          <!-- Published Date -->
+          <span class="flex items-center gap-1">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <%= time_ago_in_words(entry.published_at) %> ago
+          </span>
+        </div>
+        
+        <!-- Tags if present -->
+        <% if entry.tag_list.any? %>
+          <div class="flex flex-wrap gap-1 mt-3">
+            <% entry.tag_list.each do |tag| %>
+              <span class="badge badge-sm badge-outline"><%= tag %></span>
+            <% end %>
+          </div>
+        <% end %>
+        
+        <!-- Actions -->
+        <div class="card-actions justify-end mt-4">
+          <%= link_to entry_path(entry),
+              class: "btn btn-ghost btn-xs",
+              data: { turbo_frame: "_top" } do %>
+            View Details
+          <% end %>
+          
+          <%= link_to entry.url,
+              target: "_blank",
+              rel: "noopener",
+              class: "btn btn-primary btn-xs" do %>
+            Read Original
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

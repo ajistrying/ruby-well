@@ -1,4 +1,10 @@
 class Entry < ApplicationRecord
+  searchkick text_middle: [:title, :summary, :content, :author],
+             word_start: [:title, :author],
+             highlight: [:title, :summary],
+             searchable: [:title, :summary, :content, :author, :tags],
+             filterable: [:entry_type, :published_at, :feed_id]
+  
   belongs_to :feed
 
   validates :title, presence: true
@@ -65,6 +71,21 @@ class Entry < ApplicationRecord
     else
       "#{minutes}:#{seconds.to_s.rjust(2, '0')}"
     end
+  end
+
+  def search_data
+    {
+      title: title,
+      summary: summary,
+      content: ActionController::Base.helpers.strip_tags(content || ""),
+      author: author,
+      tags: tag_list,
+      entry_type: entry_type,
+      published_at: published_at,
+      feed_id: feed_id,
+      feed_name: feed.name,
+      feed_category: feed.category
+    }
   end
 
   private
