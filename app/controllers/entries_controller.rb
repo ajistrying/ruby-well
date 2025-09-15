@@ -6,7 +6,7 @@ class EntriesController < ApplicationController
 
     respond_to do |format|
       format.html
-      format.turbo_stream if params[:turbo_frame].present?
+      format.turbo_stream
     end
   end
 

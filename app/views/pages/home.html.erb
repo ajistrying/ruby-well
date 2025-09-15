@@ -1,65 +1,55 @@
 <div class="min-h-screen">
   <!-- Hero Section -->
-  <section class="hero min-h-[60vh] bg-gradient-to-br from-red-500 to-red-700 relative">
+  <section class="hero min-h-[60vh]">
     <div class="hero-content text-center py-16">
       <div class="max-w-4xl">
-        <h1 class="text-5xl font-bold text-gray-900 mb-6">
+        <h1 class="text-5xl font-bold text-white mb-6">
           RubyWell
         </h1>
-        <p class="text-xl text-gray-700 mb-2">
-          Where Ruby knowledge flows together
+        <p class="text-xl text-white mb-2">
+          Where Ruby resources meet
         </p>
-        <p class="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
-          Search through <%= number_with_delimiter(@total_entries) %> articles, podcasts, and videos from 
-          <%= number_with_delimiter(@total_feeds) %> Ruby community sources. 
-          Find exactly what you need with intelligent, natural language search.
+        <p class="text-lg text-gray-400 mb-8 max-w-2xl mx-auto">
+          Search through hundreds articles, podcasts, and videos from various Ruby community sources.
         </p>
         
         <!-- Search Form -->
-        <div class="card bg-base-100 shadow-xl max-w-3xl mx-auto">
+        <div class="card bg-base-100 max-w-3xl mx-auto">
           <div class="card-body">
             <%= form_with url: entries_path, method: :get, 
-                          data: { turbo_frame: "search_results", 
+                          data: { 
                                   controller: "search",
                                   action: "submit->search#search" },
                           class: "space-y-4" do |f| %>
               
               <div class="form-control">
-                <%= f.text_field :query, 
-                    placeholder: "Search for Ruby topics, tutorials, podcasts...",
-                    class: "input input-bordered input-lg w-full text-lg",
-                    data: { 
-                      search_target: "input",
-                      action: "input->search#handleInput"
-                    },
-                    autocomplete: "off",
-                    autofocus: true %>
+                <div class="flex gap-2 justify-center">
+                  <%= f.text_field :query, 
+                      placeholder: "Search for Ruby topics, tutorials, podcasts...",
+                      class: "input input-bordered input-lg flex-1 text-lg",
+                      data: { 
+                        search_target: "input",
+                        action: "input->search#handleInput"
+                      },
+                      autocomplete: "off",
+                      autofocus: true %>
+                  <%= f.submit "Search", class: "btn btn-primary btn-lg" %>
+                </div>
               </div>
               
-              <div class="flex flex-wrap gap-2 justify-center">
-                <% ["rails", "testing", "performance", "deployment", "ruby 3.0"].each do |suggestion| %>
-                  <button type="button" 
-                          class="badge badge-outline cursor-pointer hover:badge-primary"
-                          data-action="click->search#fillSuggestion"
-                          data-suggestion="<%= suggestion %>">
-                    <%= suggestion %>
-                  </button>
-                <% end %>
-              </div>
-              
-              <div class="flex gap-4 justify-center">
-                <%= f.submit "Search", class: "btn btn-primary btn-lg" %>
+              <!-- Toggle Advanced Filters Button -->
+              <div class="text-center">
                 <button type="button" 
-                        class="btn btn-ghost btn-lg"
+                        class="btn btn-ghost btn-sm"
                         data-action="click->search#toggleFilters">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                  <span data-search-target="filterToggleText">Show Advanced Filters</span>
+                  <svg class="w-4 h-4 ml-1 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                   </svg>
-                  Filters
                 </button>
               </div>
               
-              <!-- Hidden Filters Section -->
+              <!-- Advanced Filters Section -->
               <div class="hidden" data-search-target="filters">
                 <div class="divider"></div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -117,48 +107,6 @@
     </div>
   </section>
   
-  <!-- Stats Section -->
-  <section class="py-12 bg-base-200">
-    <div class="container mx-auto px-4">
-      <div class="stats stats-vertical lg:stats-horizontal shadow w-full">
-        <div class="stat">
-          <div class="stat-figure text-primary">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-8 h-8 stroke-current">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5a2 2 0 00-2-2h-2"></path>
-            </svg>
-          </div>
-          <div class="stat-title">Total Entries</div>
-          <div class="stat-value text-primary"><%= number_with_delimiter(@total_entries) %></div>
-          <div class="stat-desc">Articles, podcasts & videos</div>
-        </div>
-        
-        <div class="stat">
-          <div class="stat-figure text-secondary">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-8 h-8 stroke-current">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z"></path>
-            </svg>
-          </div>
-          <div class="stat-title">Active Feeds</div>
-          <div class="stat-value text-secondary"><%= number_with_delimiter(@total_feeds) %></div>
-          <div class="stat-desc">Ruby community sources</div>
-        </div>
-        
-        <div class="stat">
-          <div class="stat-figure text-accent">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-8 h-8 stroke-current">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-          </div>
-          <div class="stat-title">Last Updated</div>
-          <div class="stat-value text-accent text-2xl">
-            <%= time_ago_in_words(Entry.maximum(:created_at) || Time.current) %> ago
-          </div>
-          <div class="stat-desc">Fresh content daily</div>
-        </div>
-      </div>
-    </div>
-  </section>
-  
   <!-- Recent Entries Preview -->
   <section class="py-12">
     <div class="container mx-auto px-4">
@@ -200,25 +148,4 @@
     </div>
   </section>
   
-  <!-- Call to Action -->
-  <section class="py-16 bg-base-200">
-    <div class="container mx-auto px-4 text-center">
-      <h2 class="text-3xl font-bold mb-4">Help Make RubyWell Better</h2>
-      <p class="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
-        Know a great Ruby blog we're missing? Have ideas for new features? 
-        Want to support this free resource for the Ruby community?
-      </p>
-      <div class="flex gap-4 justify-center flex-wrap">
-        <button class="btn btn-primary" data-controller="modal" data-action="click->modal#open">
-          📝 Request a Feature
-        </button>
-        <button class="btn btn-secondary" data-controller="modal" data-action="click->modal#open">
-          💎 Support RubyWell
-        </button>
-      </div>
-    </div>
-  </section>
 </div>
-
-<!-- Turbo Frame for search results (will be populated when searching) -->
-<turbo-frame id="search_results"></turbo-frame>

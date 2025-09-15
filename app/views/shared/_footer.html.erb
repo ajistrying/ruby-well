@@ -1,42 +1,10 @@
-<footer class="footer footer-center p-10 bg-base-200 text-base-content">
+<footer class="footer footer-center p-6 bg-base-200 text-base-content">
   <aside>
-    <div class="text-3xl font-bold mb-2">
-      <span class="text-ruby-red">Ruby</span>Well
-    </div>
-    <p class="font-medium">
-      Where Ruby knowledge flows together
+    <p class="text-sm opacity-70">
+      <%= Time.current.year %> RubyWell - Aggregating <%= Feed.active.count %> Ruby community sources
     </p>
-    <p class="text-sm mt-2">
-      Aggregating <%= Feed.active.count %> Ruby community sources
-    </p>
-  </aside>
-  
-  <nav>
-    <div class="grid grid-flow-col gap-4">
-      <button class="btn btn-ghost btn-sm" 
-              data-controller="modal" 
-              data-modal-target="feedback"
-              data-action="click->modal#open">
-        Request Feature / Add Feed
-      </button>
-      
-      <div class="divider divider-horizontal"></div>
-      
-      <button class="btn btn-ghost btn-sm"
-              data-controller="modal"
-              data-modal-target="tip"
-              data-action="click->modal#open">
-        💎 Support This Project
-      </button>
-    </div>
-  </nav>
-  
-  <aside>
-    <p class="text-sm">
-      Built with ❤️ for the Ruby community
-    </p>
-    <p class="text-xs mt-1 opacity-70">
-      <%= Time.current.year %> - Open source and free forever
+    <p class="text-xs opacity-60">
+      Built for the Ruby community
     </p>
   </aside>
 </footer>

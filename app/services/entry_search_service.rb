@@ -149,7 +149,6 @@ class EntrySearchService
 
   def recent_months_facet
     Entry.where(published_at: 6.months.ago..)
-         .group_by_month(:published_at, format: "%B %Y")
-         .count
+      .count
   end
 end

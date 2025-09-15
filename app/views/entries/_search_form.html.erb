@@ -20,11 +20,12 @@
     <%= f.submit "Search", class: "btn btn-primary" %>
     
     <button type="button"
-            class: "btn btn-ghost"
+            class="btn btn-ghost btn-sm"
             data-action="click->search#toggleAdvanced">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
       </svg>
+      <span class="ml-1">Filters</span>
     </button>
   </div>
   
@@ -88,13 +89,23 @@
     </div>
   </div>
   
-  <!-- Keep existing filters as hidden fields when not shown -->
-  <% unless params[:entry_type].blank? %>
-    <%= f.hidden_field :entry_type, value: params[:entry_type], 
-        data: { search_target: "hiddenType" } unless params[:entry_type].blank? %>
-  <% end %>
-  <% unless params[:feed_category].blank? %>
-    <%= f.hidden_field :feed_category, value: params[:feed_category],
-        data: { search_target: "hiddenCategory" } unless params[:feed_category].blank? %>
-  <% end %>
+  <!-- Keep existing filters as hidden fields when advanced section is not shown -->
+  <div data-search-target="hiddenFilters">
+    <% if params[:entry_type].present? %>
+      <%= f.hidden_field :entry_type, value: params[:entry_type], 
+          data: { search_target: "hiddenType" } %>
+    <% end %>
+    <% if params[:feed_category].present? %>
+      <%= f.hidden_field :feed_category, value: params[:feed_category],
+          data: { search_target: "hiddenCategory" } %>
+    <% end %>
+    <% if params[:date_from].present? %>
+      <%= f.hidden_field :date_from, value: params[:date_from],
+          data: { search_target: "hiddenDateFrom" } %>
+    <% end %>
+    <% if params[:date_to].present? %>
+      <%= f.hidden_field :date_to, value: params[:date_to],
+          data: { search_target: "hiddenDateTo" } %>
+    <% end %>
+  </div>
 <% end %>

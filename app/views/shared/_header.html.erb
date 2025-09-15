@@ -1,4 +1,4 @@
-<header class="navbar bg-base-100 shadow-sm">
+<header class="navbar bg-base-100">
   <div class="container mx-auto px-4">
     <div class="flex-1">
       <%= link_to root_path, class: "btn btn-ghost text-xl" do %>
@@ -12,19 +12,18 @@
         <li><%= link_to "Home", root_path %></li>
         <li><%= link_to "Browse", entries_path %></li>
         <li>
-          <details>
-            <summary>Categories</summary>
-            <ul class="p-2 bg-base-100 rounded-t-none w-48 shadow-lg z-50">
-              <li><%= link_to "Articles", entries_path(entry_type: "article") %></li>
-              <li><%= link_to "Podcasts", entries_path(entry_type: "podcast") %></li>
-              <li><%= link_to "Videos", entries_path(entry_type: "video") %></li>
-              <li class="divider"></li>
-              <li><%= link_to "Personal Blogs", entries_path(feed_category: "personal") %></li>
-              <li><%= link_to "Company Blogs", entries_path(feed_category: "company") %></li>
-              <li><%= link_to "Community", entries_path(feed_category: "community") %></li>
-              <li><%= link_to "Newsletters", entries_path(feed_category: "newsletter") %></li>
-            </ul>
-          </details>
+          <button class="btn btn-sm btn-ghost" 
+                  data-controller="modal" 
+                  data-action="click->modal#open">
+            Request a Feature
+          </button>
+        </li>
+        <li>
+          <button class="btn btn-sm btn-primary"
+                  data-controller="modal"
+                  data-action="click->modal#open">
+            Support RubyWell
+          </button>
         </li>
       </ul>
     </div>

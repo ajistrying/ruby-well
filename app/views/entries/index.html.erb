@@ -18,20 +18,19 @@
   </div>
   
   <!-- Main Content Area with Sidebar -->
-  <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+  <div class="grid sm:grid-cols-4 gap-8">
     <!-- Sidebar Facets -->
-    <aside class="lg:col-span-1">
+    <aside class="sm:col-span-1">
       <div class="card bg-base-100 shadow-sm sticky top-4">
         <div class="card-body">
           <h3 class="font-bold mb-4">Filter Results</h3>
-          
           <%= render "filters", facets: @facets %>
         </div>
       </div>
     </aside>
     
     <!-- Search Results -->
-    <div class="lg:col-span-3">
+    <div class="sm:col-span-3">
       <turbo-frame id="search_results">
         <% if @entries.any? %>
           <!-- Results Count -->
@@ -49,10 +48,7 @@
           
           <!-- Pagination -->
           <div class="mt-8">
-            <%= paginate @entries, 
-                theme: 'daisy',
-                window: 2,
-                outer_window: 1 %>
+            <%= paginate @entries %>
           </div>
         <% else %>
           <!-- No Results -->

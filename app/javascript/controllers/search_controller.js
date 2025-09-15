@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["input", "filters", "advanced", "hiddenType", "hiddenCategory"]
+  static targets = ["input", "filters", "advanced", "hiddenType", "hiddenCategory", "hiddenDateFrom", "hiddenDateTo", "hiddenFilters", "filterToggleText"]
   
   connect() {
     // Initialize search on page load if query exists
@@ -13,6 +13,7 @@ export default class extends Controller {
   
   search(event) {
     // Form will submit naturally via Turbo
+    console.log("Searching for:", this.inputTarget.value)
   }
   
   handleInput(event) {
@@ -24,6 +25,12 @@ export default class extends Controller {
     event.preventDefault()
     if (this.hasFiltersTarget) {
       this.filtersTarget.classList.toggle('hidden')
+      
+      // Update toggle button text
+      if (this.hasFilterToggleTextTarget) {
+        const isHidden = this.filtersTarget.classList.contains('hidden')
+        this.filterToggleTextTarget.textContent = isHidden ? 'Show Advanced Filters' : 'Hide Advanced Filters'
+      }
     }
   }
   
@@ -31,6 +38,13 @@ export default class extends Controller {
     event.preventDefault()
     if (this.hasAdvancedTarget) {
       this.advancedTarget.classList.toggle('hidden')
+      
+      // Hide/show hidden filter fields based on advanced section visibility
+      if (this.hasHiddenFiltersTarget) {
+        const isAdvancedHidden = this.advancedTarget.classList.contains('hidden')
+        // Only show hidden fields when advanced section is hidden
+        this.hiddenFiltersTarget.style.display = isAdvancedHidden ? 'block' : 'none'
+      }
     }
   }
   

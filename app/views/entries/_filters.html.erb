@@ -5,7 +5,7 @@
     <% entry_types = facets[:entry_types] || {} %>
     <% [["article", "Articles"], ["podcast", "Podcasts"], ["video", "Videos"]].each do |value, label| %>
       <% count = entry_types[value] || 0 %>
-      <%= link_to entries_path(params.permit(:query, :feed_category).merge(entry_type: value)),
+      <%= link_to entries_path(params.permit(:query, :feed_category, :date_from, :date_to).merge(entry_type: value)),
           class: "flex justify-between items-center p-2 rounded hover:bg-base-200 text-sm #{'bg-base-200' if params[:entry_type] == value}",
           data: { turbo_frame: "search_results" } do %>
         <span><%= label %></span>
@@ -14,7 +14,7 @@
     <% end %>
     
     <% if params[:entry_type].present? %>
-      <%= link_to entries_path(params.permit(:query, :feed_category)),
+      <%= link_to entries_path(params.permit(:query, :feed_category, :date_from, :date_to).except(:entry_type)),
           class: "text-xs link link-hover mt-2 block",
           data: { turbo_frame: "search_results" } do %>
         Clear type filter
@@ -36,7 +36,7 @@
       ["podcast", "Podcasts"]
     ].each do |value, label| %>
       <% count = categories[value] || 0 %>
-      <%= link_to entries_path(params.permit(:query, :entry_type).merge(feed_category: value)),
+      <%= link_to entries_path(params.permit(:query, :entry_type, :date_from, :date_to).merge(feed_category: value)),
           class: "flex justify-between items-center p-2 rounded hover:bg-base-200 text-sm #{'bg-base-200' if params[:feed_category] == value}",
           data: { turbo_frame: "search_results" } do %>
         <span><%= label %></span>
@@ -45,7 +45,7 @@
     <% end %>
     
     <% if params[:feed_category].present? %>
-      <%= link_to entries_path(params.permit(:query, :entry_type)),
+      <%= link_to entries_path(params.permit(:query, :entry_type, :date_from, :date_to).except(:feed_category)),
           class: "text-xs link link-hover mt-2 block",
           data: { turbo_frame: "search_results" } do %>
         Clear category filter
@@ -64,7 +64,7 @@
       ["This Month", 30.days.ago.to_date],
       ["This Year", 365.days.ago.to_date]
     ].each do |label, date_from| %>
-      <%= link_to entries_path(params.permit(:query, :entry_type, :feed_category).merge(date_from: date_from)),
+      <%= link_to entries_path(params.permit(:query, :entry_type, :feed_category, :date_to).merge(date_from: date_from)),
           class: "block p-2 rounded hover:bg-base-200 text-sm #{'bg-base-200' if params[:date_from] == date_from.to_s}",
           data: { turbo_frame: "search_results" } do %>
         <%= label %>
@@ -72,7 +72,7 @@
     <% end %>
     
     <% if params[:date_from].present? || params[:date_to].present? %>
-      <%= link_to entries_path(params.permit(:query, :entry_type, :feed_category)),
+      <%= link_to entries_path(params.permit(:query, :entry_type, :feed_category).except(:date_from, :date_to)),
           class: "text-xs link link-hover mt-2 block",
           data: { turbo_frame: "search_results" } do %>
         Clear date filter

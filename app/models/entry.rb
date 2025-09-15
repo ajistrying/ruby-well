@@ -1,9 +1,5 @@
 class Entry < ApplicationRecord
-  searchkick text_middle: [ :title, :summary, :content, :author ],
-             word_start: [ :title, :author ],
-             highlight: [ :title, :summary ],
-             searchable: [ :title, :summary, :content, :author, :tags ],
-             filterable: [ :entry_type, :published_at, :feed_id ]
+  searchkick
 
   belongs_to :feed
 
