@@ -9,9 +9,11 @@ import SearchController from "./search_controller"
 import ModalController from "./modal_controller"
 import ShareController from "./share_controller"
 import TrackController from "./track_controller"
+import FilterLinkController from "./filter_link_controller"
 
 application.register("hello", HelloController)
 application.register("search", SearchController)
 application.register("modal", ModalController)
 application.register("share", ShareController)
 application.register("track", TrackController)
+application.register("filter-link", FilterLinkController)

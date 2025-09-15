@@ -1,5 +1,6 @@
 class EntriesController < ApplicationController
   def index
+    # binding.pry
     @search_service = EntrySearchService.new(params)
     @entries = @search_service.search
     @facets = @search_service.facets

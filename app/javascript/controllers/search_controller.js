@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["input", "filters", "advanced", "hiddenType", "hiddenCategory", "hiddenDateFrom", "hiddenDateTo", "hiddenFilters", "filterToggleText"]
+  static targets = ["input", "filters", "advanced", "hiddenType", "hiddenCategory", "hiddenDateFrom", "hiddenDateTo", "hiddenFilters"]
   
   connect() {
     // Initialize search on page load if query exists
@@ -19,19 +19,6 @@ export default class extends Controller {
   handleInput(event) {
     // Debounced search could be implemented here
     // For now, let user press Enter or click Search
-  }
-  
-  toggleFilters(event) {
-    event.preventDefault()
-    if (this.hasFiltersTarget) {
-      this.filtersTarget.classList.toggle('hidden')
-      
-      // Update toggle button text
-      if (this.hasFilterToggleTextTarget) {
-        const isHidden = this.filtersTarget.classList.contains('hidden')
-        this.filterToggleTextTarget.textContent = isHidden ? 'Show Advanced Filters' : 'Hide Advanced Filters'
-      }
-    }
   }
   
   toggleAdvanced(event) {
