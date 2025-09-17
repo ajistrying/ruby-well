@@ -49,6 +49,9 @@ gem "faraday-retry"  # Auto-retry failed requests
 # HTML content cleaning
 gem "loofah"  # Better than basic regex for HTML cleaning
 
+# HTML parsing for web scraping
+gem "nokogiri"
+
 # OpenAI API for embeddings and AI processing
 gem "ruby-openai"
 

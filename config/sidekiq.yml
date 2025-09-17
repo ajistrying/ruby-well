@@ -1,0 +1,38 @@
+---
+:schedule:
+  scrape_github_trending:
+    cron: "0 2 * * *"  # Run at 2 AM every day
+    class: "ScrapeGithubTrendingJob"
+    description: "Fetch trending Ruby repositories from GitHub"
+    args:
+      language: "ruby"
+      time_range: "daily"
+    active_job: true
+    queue: default
+  
+  cleanup_old_trending:
+    cron: "0 3 * * 0"  # Run at 3 AM every Sunday
+    class: "CleanupOldTrendingJob"
+    description: "Clean up old trending repository data"
+    active_job: true
+    queue: low
+
+# Sidekiq configuration
+:concurrency: 5
+:max_retries: 3
+
+# Queue configuration
+:queues:
+  - critical
+  - default
+  - low
+
+# Set timeout to 8 hours
+:timeout: 28800
+
+# Logging
+:verbose: true
+
+# Redis configuration (optional, defaults to localhost:6379)
+# :redis:
+#   url: redis://localhost:6379/0
