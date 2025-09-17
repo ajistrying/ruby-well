@@ -16,10 +16,7 @@
       </div>
     </div>
   </div>
-  
-  <!-- Active Filters Display -->
-  <%= render "active_filters" %>
-  
+
   <!-- Main Content Area with Sidebar -->
   <div class="grid sm:grid-cols-4 gap-8">
     <!-- Sidebar Facets -->
@@ -31,10 +28,11 @@
         </div>
       </div>
     </aside>
-    
+
     <!-- Search Results -->
     <div class="sm:col-span-3">
       <turbo-frame id="search_results">
+        <%= render "active_filters" %>
         <% if @entries.any? %>
           <!-- Results Count -->
           <div class="mb-4 text-sm text-gray-600">

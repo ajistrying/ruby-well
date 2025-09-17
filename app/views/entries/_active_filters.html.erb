@@ -1,23 +1,29 @@
 <%
   active_filters = []
-  
+
   if params[:entry_type].present?
     active_filters << { label: "Type: #{params[:entry_type].humanize}", param: :entry_type }
   end
-  
+
+  if params[:feed_category].present?
+    active_filters << { label: "Category: #{params[:feed_category].humanize}", param: :feed_category }
+  end
+
   if params[:date_from].present?
-    date = Date.parse(params[:date_from].to_s) rescue nil
-    if date
-      days_ago = (Date.current - date).to_i
-      date_label = case days_ago
-        when 0 then "Today"
-        when 1..7 then "This Week"
-        when 8..30 then "This Month"
-        when 31..365 then "This Year"
-        else date.strftime("%b %d, %Y")
-      end
-      active_filters << { label: "Published: #{date_label}", param: :date_from }
+    date_param = params[:date_from].to_s
+    date_label = case date_param
+      when 0.days.ago.to_date.to_s then "Today"
+      when 7.days.ago.to_date.to_s then "This Week"
+      when 30.days.ago.to_date.to_s then "This Month"
+      when 365.days.ago.to_date.to_s then "This Year"
+      else
+        begin
+          Date.parse(date_param).strftime("%b %d, %Y")
+        rescue ArgumentError
+          date_param
+        end
     end
+    active_filters << { label: "Published: #{date_label}", param: :date_from }
   end
 %>
 
