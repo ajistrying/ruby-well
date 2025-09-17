@@ -21,7 +21,7 @@ module FeedParsers
         guid: entry_data[:guid] || generate_guid(entry_data),
         summary: sanitize_html(entry_data[:summary]),
         content: sanitize_html(entry_data[:content]),
-        published_at: parse_date(entry_data[:published_at]),
+        published_at: parse_date_with_fallback(entry_data[:published_at], entry_data[:url]),
         author: sanitize_text(entry_data[:author]),
         enclosure_url: entry_data[:enclosure_url],
         duration: entry_data[:duration]
@@ -53,6 +53,44 @@ module FeedParsers
       rescue ArgumentError, TypeError
         nil
       end
+    end
+
+    def parse_date_with_fallback(date_string, url = nil)
+      # First try to parse the provided date
+      parsed_date = parse_date(date_string)
+      return parsed_date if parsed_date.present?
+
+      # If no date found and we have a URL, try to extract from URL
+      return nil if url.blank?
+
+      extract_date_from_url(url)
+    end
+
+    def extract_date_from_url(url)
+      return nil if url.blank?
+
+      # Common date patterns in URLs
+      # YYYY-MM-DD format (e.g., /2013-03-17-title or /blog/2013-03-17-title)
+      if match = url.match(/(\d{4})-(\d{1,2})-(\d{1,2})/)
+        year, month, day = match.captures.map(&:to_i)
+        return DateTime.new(year, month, day) rescue nil
+      end
+
+      # YYYY/MM/DD format (e.g., /2013/03/17/title)
+      if match = url.match(/(\d{4})\/(\d{1,2})\/(\d{1,2})/)
+        year, month, day = match.captures.map(&:to_i)
+        return DateTime.new(year, month, day) rescue nil
+      end
+
+      # YYYYMMDD format (e.g., /20130317-title)
+      if match = url.match(/(\d{4})(\d{2})(\d{2})/)
+        year = match[1].to_i
+        month = match[2].to_i
+        day = match[3].to_i
+        return DateTime.new(year, month, day) rescue nil
+      end
+
+      nil
     end
 
     def generate_guid(entry_data)
