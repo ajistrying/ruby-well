@@ -18,7 +18,7 @@ class CreateEntryFromFeed
       guid: context.entry_data[:guid],
       summary: context.entry_data[:summary],
       content: context.entry_data[:content],
-      published_at: context.entry_data[:published_at] || Time.current,
+      published_at: context.entry_data[:published_at],
       author: context.entry_data[:author],
       enclosure_url: context.entry_data[:enclosure_url],
       duration: context.entry_data[:duration],
