@@ -1,0 +1,58 @@
+<%
+  active_filters = []
+  
+  if params[:entry_type].present?
+    active_filters << { label: "Type: #{params[:entry_type].humanize}", param: :entry_type }
+  end
+  
+  if params[:date_from].present?
+    date = Date.parse(params[:date_from].to_s) rescue nil
+    if date
+      days_ago = (Date.current - date).to_i
+      date_label = case days_ago
+        when 0 then "Today"
+        when 1..7 then "This Week"
+        when 8..30 then "This Month"
+        when 31..365 then "This Year"
+        else date.strftime("%b %d, %Y")
+      end
+      active_filters << { label: "Published: #{date_label}", param: :date_from }
+    end
+  end
+%>
+
+<% if active_filters.any? %>
+  <div class="bg-base-200 rounded-lg p-4 mb-6">
+    <div class="flex flex-wrap items-center gap-2">
+      <span class="text-sm font-medium">Active Filters:</span>
+      
+      <% active_filters.each do |filter| %>
+        <%= link_to entries_path(params.permit(:query, :entry_type, :date_from, :date_to, :page).except(filter[:param])),
+            class: "badge badge-lg gap-2",
+            data: {
+              turbo_frame: "search_results",
+              controller: "filter-link",
+              action: "click->filter-link#updateQuery"
+            } do %>
+          <%= filter[:label] %>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-4 h-4 stroke-current">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        <% end %>
+      <% end %>
+      
+      <span class="text-sm text-gray-600 ml-2">
+        — <%= number_with_delimiter(@entries.total_count) %> <%= "result".pluralize(@entries.total_count) %> found
+      </span>
+      
+      <%= link_to "Clear All Filters",
+          entries_path(query: params[:query]),
+          class: "btn btn-sm btn-ghost ml-auto",
+          data: {
+            turbo_frame: "search_results",
+            controller: "filter-link",
+            action: "click->filter-link#updateQuery"
+          } %>
+    </div>
+  </div>
+<% end %>
