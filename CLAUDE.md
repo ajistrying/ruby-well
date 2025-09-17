@@ -1,10 +1,10 @@
-# Ruby-Well RSS Feed Aggregator
+# Ruby-Well Community Resource Aggregator
 
-A Rails 8 application for aggregating and managing RSS/Atom feeds from Ruby community blogs, podcasts, and newsletters. Built with intelligent parsing, background processing, and comprehensive feed management.
+A Rails 8 application for aggregating and managing RSS/Atom feeds from Ruby community blogs, podcasts, and newsletters, plus daily tracking of trending GitHub Ruby repositories. Built with intelligent parsing, web scraping, background processing, and comprehensive content management.
 
 ## 🏗️ Architecture Overview
 
-This application follows a clean architecture pattern using interactors for business logic, background jobs for processing, and service objects for specialized parsing.
+This application follows a clean architecture pattern using interactors for business logic, background jobs for processing, and service objects for specialized parsing and scraping.
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
@@ -13,8 +13,15 @@ This application follows a clean architecture pattern using interactors for busi
                                │
                                ▼
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│ Background Jobs │───▶│ Feed Parsers    │───▶│   Database      │
+│ Background Jobs │───▶│  Feed Parsers   │───▶│   Database      │
+│  (Sidekiq)      │    │  & Scrapers     │    │   (SQLite)      │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
+        │                      │
+        ▼                      ▼
+┌─────────────────┐    ┌─────────────────┐
+│  Sidekiq-Cron   │    │ GitHub Trending │
+│  (Scheduled)    │    │   (Nokogiri)    │
+└─────────────────┘    └─────────────────┘
 ```
 
 ## 📊 Data Models
@@ -59,6 +66,34 @@ Represents individual blog posts, podcast episodes, or articles.
 - `tag_list` - Parses JSON tags
 - `content_preview` - Truncated clean content
 - `formatted_duration` - Human-readable duration (MM:SS)
+
+### TrendingRepo Model (`app/models/trending_repo.rb`)
+Represents GitHub trending repositories scraped daily.
+
+**Key Attributes:**
+- `github_id` - Unique GitHub repository identifier
+- `name` - Repository name
+- `owner` - Repository owner/organization
+- `full_name` - Full repository path (owner/name)
+- `description` - Repository description
+- `url` - GitHub repository URL
+- `stars_today` - Stars gained today
+- `total_stars` - Total star count
+- `forks` - Fork count
+- `language` - Primary programming language
+- `trending_date` - Date when it was trending
+- `position` - Position in trending list (1-25)
+- `contributors` - JSON array of contributor data
+
+**Key Methods:**
+- `today` scope - Repos trending today
+- `for_date(date)` scope - Repos for specific date
+- `by_position` scope - Ordered by trending position
+- `top(limit)` scope - Top N trending repos
+- `import_from_scraper` - Creates/updates from scraped data
+- `cleanup_old_data` - Removes old records
+- `stars_display` - Formatted star count with daily gain
+- `trending_position` - Formatted position (#1, #2, etc.)
 
 ## 🔧 Core Interactors
 
@@ -154,6 +189,21 @@ Interactors handle business logic using the [interactor gem](https://github.com/
 - Category-based fetch interval assignment
 - Input validation and error handling
 
+### GitHub Trending System
+
+#### `ImportTrendingRepos`
+**File:** `app/interactors/import_trending_repos.rb`
+**Purpose:** Imports trending Ruby repositories from GitHub
+**Input:** `language` (default: "ruby"), `time_range` (default: "daily")
+**Output:** Import statistics with imported/skipped/failed counts
+
+**Features:**
+- Calls GithubTrendingScraper service
+- Handles deduplication and updates
+- Automatic cleanup of old data (30+ days)
+- Comprehensive error handling and logging
+- Returns detailed import report
+
 ## 🔍 Feed Parser System
 
 Located in `app/services/feed_parsers/`, this system provides intelligent parsing for multiple feed formats.
@@ -225,6 +275,34 @@ If primary parser fails, tries all parsers in order of likelihood:
 - Generates titles from URL slugs
 - Handles sitemap index files
 
+## 🌟 GitHub Trending Scraper
+
+### `GithubTrendingScraper`
+**File:** `app/services/github_trending_scraper.rb`
+**Purpose:** Scrapes trending Ruby repositories from GitHub
+
+**Features:**
+- HTML parsing using Nokogiri
+- Extracts repository metadata (stars, forks, contributors)
+- Handles daily/weekly/monthly trending periods
+- Robust error handling with fallbacks
+- User-Agent spoofing for reliable access
+
+**Data Extracted:**
+- Repository name, owner, and full path
+- Description and primary language
+- Total stars and stars gained today
+- Fork count
+- Contributor avatars
+- Trending position (1-25)
+
+**Usage:**
+```ruby
+scraper = GithubTrendingScraper.new(language: "ruby", time_range: "daily")
+result = scraper.scrape
+# Returns: { success: true/false, repos: [...], error: nil/message }
+```
+
 ## ⚙️ Background Job System
 
 Uses Sidekiq for reliable background processing with proper queuing and retry logic.
@@ -250,8 +328,30 @@ Uses Sidekiq for reliable background processing with proper queuing and retry lo
 - Comprehensive error logging
 - Integration with feed failure tracking
 
+### `ScrapeGithubTrendingJob`
+**File:** `app/jobs/scrape_github_trending_job.rb`
+**Purpose:** Fetches trending Ruby repositories from GitHub
+
+**Features:**
+- Scheduled daily via sidekiq-cron (2 AM)
+- Calls ImportTrendingRepos interactor
+- Automatic retry on failure with exponential backoff
+- Detailed logging of import results
+- Optional webhook/notification hooks
+
+### `CleanupOldTrendingJob`
+**File:** `app/jobs/cleanup_old_trending_job.rb`
+**Purpose:** Removes old trending repository data
+
+**Features:**
+- Scheduled weekly via sidekiq-cron (Sundays at 3 AM)
+- Configurable retention period (default: 30 days)
+- Low priority queue to avoid interfering with fetching
+- Logs cleanup statistics
+
 ## 🛠️ Rake Task System
 
+### Feed Tasks
 **File:** `lib/tasks/feeds.rake`
 
 Comprehensive rake tasks for all feed operations:
@@ -277,6 +377,23 @@ Comprehensive rake tasks for all feed operations:
 ### Testing Tasks
 - `feeds:test_parser[url]` - Test parser on URL
 
+### GitHub Trending Tasks
+**File:** `lib/tasks/trending.rake`
+
+Tasks for managing GitHub trending repositories:
+
+#### Fetching Tasks
+- `trending:fetch` - Manually fetch latest trending repos
+- `trending:fetch_async` - Queue background job for fetching
+- `trending:test_scraper` - Test scraper without saving to database
+
+#### Display Tasks
+- `trending:show` - Display current trending repos in console
+- `trending:stats` - Show statistics and most frequently trending
+
+#### Maintenance Tasks
+- `trending:cleanup` - Remove old trending data (configurable retention)
+
 ## 🔄 Data Flow
 
 ### OPML Import Flow
@@ -294,6 +411,13 @@ Feed Update ← UpdateFeedStatus ← ProcessFeedEntries ← Create Entries
 ### Background Processing Flow
 ```
 Rake Task → FetchAllFeedsJob → Multiple FetchSingleFeedJob → FetchFeedEntries
+```
+
+### GitHub Trending Flow
+```
+Daily Cron → ScrapeGithubTrendingJob → ImportTrendingRepos → GithubTrendingScraper
+                                              ↓
+Database ← TrendingRepo.import_from_scraper ← Parsed HTML Data
 ```
 
 ## 🏷️ Feed Categories & Intervals
@@ -325,6 +449,32 @@ The system organizes feeds by category with different fetch intervals:
 - URL + date fallback for feeds without GUIDs
 - Clean duplicate removal via rake task
 
+## 🖼️ User Interface Features
+
+### Homepage
+- **Recent Entries**: Latest blog posts, podcasts, and videos from RSS feeds
+- **Trending Ruby Projects**: Top 5 trending GitHub repositories with:
+  - Repository name and owner
+  - Stars gained today indicator
+  - Total stars and forks
+  - Direct GitHub links
+
+### Trending Repos Page (`/trending_repos`)
+- Full list of 25 trending repositories
+- Date selector for viewing historical data
+- Detailed repository cards showing:
+  - Trending position (#1-#25)
+  - Full description
+  - Stars gained today badge
+  - Contributor avatars
+  - Language and statistics
+- Individual repo detail pages with trending history
+
+### Navigation
+- Main menu with links to Home, Browse (entries), and Trending
+- Quick refresh button for manual updates
+- Responsive design with DaisyUI components
+
 ## 🚀 Getting Started
 
 ### Initial Setup
@@ -335,6 +485,9 @@ rake feeds:setup
 # Or step by step:
 rake feeds:import_opml
 rake feeds:fetch_all
+
+# Fetch initial trending repos
+rake trending:fetch
 ```
 
 ### Daily Operations
@@ -342,12 +495,30 @@ rake feeds:fetch_all
 # Fetch stale feeds
 rake feeds:fetch_stale
 
-# Check status
+# Check feed status
 rake feeds:stats
+
+# View trending repos
+rake trending:show
 
 # Handle problems
 rake feeds:errors
 rake feeds:reset_failed
+```
+
+### GitHub Trending Operations
+```bash
+# Manual fetch of trending repos
+rake trending:fetch
+
+# Test scraper without saving
+rake trending:test_scraper
+
+# View trending statistics
+rake trending:stats
+
+# Clean up old data (> 30 days)
+rake trending:cleanup
 ```
 
 ### Adding New Feeds
@@ -367,12 +538,17 @@ rake feeds:import_opml["new_feeds.opml"]
 - Error rates by category
 - Entry creation rates
 - Failed feed count
+- Daily trending repo imports
+- Most frequently trending repositories
+- GitHub scraper success rate
 
 ### Regular Maintenance
 - Weekly duplicate cleanup
 - Monthly failed feed review
 - Periodic OPML export for backup
 - Monitor disk space for entry content
+- Automatic cleanup of trending data older than 30 days
+- Monitor GitHub scraper for blocking or rate limiting
 
 ### Performance Considerations
 - Background job queue monitoring
@@ -380,4 +556,14 @@ rake feeds:import_opml["new_feeds.opml"]
 - Content trimming for very long articles
 - Rate limiting respect for external servers
 
-This architecture provides a robust, scalable system for aggregating Ruby community content while being respectful to source servers and handling the variety of feed formats encountered in the wild.
+### Dependencies Added
+- **Nokogiri**: HTML parsing for GitHub trending scraper
+- **Sidekiq-Cron**: Already included, configured for scheduled jobs
+
+### Scheduled Jobs Configuration
+**File:** `config/sidekiq.yml`
+
+- **scrape_github_trending**: Daily at 2 AM - Fetches trending repos
+- **cleanup_old_trending**: Weekly on Sundays at 3 AM - Removes old data
+
+This architecture provides a robust, scalable system for aggregating Ruby community content and tracking GitHub trending repositories while being respectful to external servers and handling various data formats gracefully.
