@@ -15,7 +15,7 @@
           "type": "controller",
           "class": "EntriesController",
           "method": "show",
-          "line": 18,
+          "line": 19,
           "file": "app/controllers/entries_controller.rb",
           "rendered": {
             "name": "entries/show",
@@ -28,6 +28,74 @@
         "template": "entries/show"
       },
       "user_input": "Entry.find(params[:id]).url",
+      "confidence": "Weak",
+      "cwe_id": [
+        79
+      ],
+      "note": ""
+    },
+    {
+      "warning_type": "Cross-Site Scripting",
+      "warning_code": 4,
+      "fingerprint": "9bcc3a824cc5e885173778f06496bf210385d3e48e3d81bee22911504e26d3b9",
+      "check_name": "LinkToHref",
+      "message": "Potentially unsafe model attribute in `link_to` href",
+      "file": "app/views/trending_repos/show.html.erb",
+      "line": 17,
+      "link": "https://brakemanscanner.org/docs/warning_types/link_to_href",
+      "code": "link_to(TrendingRepo.find(params[:id]).github_url, :target => \"_blank\", :rel => \"noopener\", :class => \"link link-hover flex items-center gap-2\")",
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "TrendingReposController",
+          "method": "show",
+          "line": 27,
+          "file": "app/controllers/trending_repos_controller.rb",
+          "rendered": {
+            "name": "trending_repos/show",
+            "file": "app/views/trending_repos/show.html.erb"
+          }
+        }
+      ],
+      "location": {
+        "type": "template",
+        "template": "trending_repos/show"
+      },
+      "user_input": "TrendingRepo.find(params[:id]).github_url",
+      "confidence": "Weak",
+      "cwe_id": [
+        79
+      ],
+      "note": ""
+    },
+    {
+      "warning_type": "Cross-Site Scripting",
+      "warning_code": 4,
+      "fingerprint": "f2789b9a3757e6da7a56020ad12d10e508fcce47e104c395f829ef70916dcf41",
+      "check_name": "LinkToHref",
+      "message": "Potentially unsafe model attribute in `link_to` href",
+      "file": "app/views/trending_repos/show.html.erb",
+      "line": 150,
+      "link": "https://brakemanscanner.org/docs/warning_types/link_to_href",
+      "code": "link_to(\"View on GitHub\", TrendingRepo.find(params[:id]).github_url, :target => \"_blank\", :rel => \"noopener\", :class => \"btn btn-primary\")",
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "TrendingReposController",
+          "method": "show",
+          "line": 27,
+          "file": "app/controllers/trending_repos_controller.rb",
+          "rendered": {
+            "name": "trending_repos/show",
+            "file": "app/views/trending_repos/show.html.erb"
+          }
+        }
+      ],
+      "location": {
+        "type": "template",
+        "template": "trending_repos/show"
+      },
+      "user_input": "TrendingRepo.find(params[:id]).github_url",
       "confidence": "Weak",
       "cwe_id": [
         79
