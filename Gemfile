@@ -61,6 +61,10 @@ gem "httparty"
 # Pagination for large result sets
 gem "kaminari"
 
+# Full text search with Elasticsearch
+gem "searchkick"
+gem "elasticsearch"
+
 # Rate limiting (to be nice to RSS feeds)
 gem "rack-attack"
 
@@ -75,10 +79,12 @@ gem "interactor", "~> 3.0"
 # Styling
 gem "tailwindcss-rails", "~> 4.3"
 
+gem "overmind", "~> 2.5"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
-  gem "byebug"
+  gem "pry-byebug"
 
   # Static analysis for security vulnerabilities [https://brakemanscanner.org/]
   gem "brakeman", require: false
@@ -98,4 +104,3 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 end
-

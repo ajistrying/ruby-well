@@ -1,0 +1,21 @@
+<div class="text-center py-8">
+  <div class="text-6xl mb-4">
+    <%= feedback.type_icon %>
+  </div>
+  <h3 class="text-2xl font-bold mb-2">Thank You!</h3>
+  <p class="text-gray-600 mb-4">
+    Your <%= feedback.type_label.downcase %> has been received.
+  </p>
+  <p class="text-sm text-gray-500 mb-6">
+    <% if feedback.email.present? %>
+      We'll send updates to <%= feedback.email %>
+    <% else %>
+      We appreciate your feedback!
+    <% end %>
+  </p>
+  <button type="button" 
+          class="btn btn-primary"
+          onclick="document.getElementById('modal_feedback').close()">
+    Close
+  </button>
+</div>

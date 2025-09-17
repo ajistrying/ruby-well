@@ -1,1 +1,138 @@
-<button class="btn btn-primary">Hello daisyUI!</button>
+<div class="min-h-screen">
+  <!-- Hero Section -->
+  <section class="hero min-h-[60vh]">
+    <div class="hero-content text-center py-16">
+      <div class="max-w-4xl">
+        <h1 class="text-5xl font-bold flex items-center justify-center">
+          <%= image_tag "/rubywell.svg", alt: "RubyWell", class: "w-16 h-16" %>
+          RubyWell
+        </h1>
+        <p class="text-xl">A Ruby community resource aggregator</p>
+        <p class="text-lg mt-8 max-w-2xl mx-auto">
+          Search through hundreds of articles, podcasts, and videos from various Ruby community sources
+        </p>
+        
+        <!-- Search Form -->
+        <div class="card bg-base-100 max-w-3xl mx-auto">
+          <div class="card-body">
+            <%= form_with url: entries_path, method: :get, 
+                          data: { 
+                                  controller: "search",
+                                  action: "submit->search#search" },
+                          class: "space-y-4" do |f| %>
+              
+              <div class="form-control">
+                <div class="flex gap-2 justify-center">
+                  <%= f.text_field :query, 
+                      placeholder: "Search for articles, tutorials, podcasts...",
+                      class: "input input-bordered input-lg flex-1 text-lg",
+                      data: { 
+                        search_target: "input",
+                        action: "input->search#handleInput"
+                      },
+                      autocomplete: "off",
+                      autofocus: true %>
+                  <%= f.submit "Search", class: "btn btn-primary btn-lg" %>
+                </div>
+              </div>
+              
+              <!-- Advanced Filters Section -->
+              <div class="hidden" data-search-target="filters">
+                <div class="divider"></div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div class="form-control">
+                    <label class="label">
+                      <span class="label-text">Content Type</span>
+                    </label>
+                    <%= f.select :entry_type, 
+                        options_for_select([
+                          ["All Types", ""],
+                          ["Articles", "article"],
+                          ["Podcasts", "podcast"],
+                          ["Videos", "video"]
+                        ]),
+                        {},
+                        class: "select select-bordered" %>
+                  </div>
+                  
+                  <div class="form-control">
+                    <label class="label">
+                      <span class="label-text">Source Category</span>
+                    </label>
+                    <%= f.select :feed_category,
+                        options_for_select([
+                          ["All Categories", ""],
+                          ["Personal Blogs", "personal"],
+                          ["Company Blogs", "company"],
+                          ["Community", "community"],
+                          ["Newsletters", "newsletter"],
+                          ["Podcasts", "podcast"]
+                        ]),
+                        {},
+                        class: "select select-bordered" %>
+                  </div>
+                  
+                  <div class="form-control">
+                    <label class="label">
+                      <span class="label-text">Date Range</span>
+                    </label>
+                    <div class="flex gap-2">
+                      <%= f.date_field :date_from, 
+                          class: "input input-bordered input-sm flex-1",
+                          placeholder: "From" %>
+                      <%= f.date_field :date_to,
+                          class: "input input-bordered input-sm flex-1",
+                          placeholder: "To" %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Recent Entries Preview -->
+  <section class="py-12">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-8">Recent Additions</h2>
+      
+      <div class="grid gap-4 max-w-4xl mx-auto">
+        <% @recent_entries.each do |entry| %>
+          <div class="card bg-base-100 shadow-sm hover:shadow-md transition-shadow">
+            <div class="card-body">
+              <div class="flex items-start justify-between">
+                <div class="flex-1">
+                  <h3 class="card-title text-lg">
+                    <%= link_to entry.title, entry.url, 
+                        target: "_blank",
+                        rel: "noopener",
+                        class: "link link-hover" %>
+                  </h3>
+                  <p class="text-sm text-gray-600 mt-2">
+                    <%= truncate(entry.content_preview, length: 150) %>
+                  </p>
+                  <div class="flex items-center gap-4 mt-3 text-sm text-gray-500">
+                    <span class="badge badge-ghost badge-sm">
+                      <%= entry.entry_type.capitalize %>
+                    </span>
+                    <span><%= entry.feed.name %></span>
+                    <span><%= time_ago_in_words(entry.published_at) %> ago</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+      
+      <div class="text-center mt-8">
+        <%= link_to "Browse All Entries →", entries_path, 
+            class: "btn btn-primary btn-outline" %>
+      </div>
+    </div>
+  </section>
+  
+</div>
