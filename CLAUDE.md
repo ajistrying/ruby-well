@@ -561,8 +561,9 @@ rake feeds:import_opml["new_feeds.opml"]
 - **Sidekiq-Cron**: Already included, configured for scheduled jobs
 
 ### Scheduled Jobs Configuration
-**File:** `config/sidekiq.yml`
+**File:** `config/schedule.yml`
 
+Sidekiq-cron automatically loads jobs from this file:
 - **scrape_github_trending**: Daily at 2 AM - Fetches trending repos
 - **cleanup_old_trending**: Weekly on Sundays at 3 AM - Removes old data
 
