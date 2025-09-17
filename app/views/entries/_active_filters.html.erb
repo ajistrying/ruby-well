@@ -41,9 +41,11 @@
         <% end %>
       <% end %>
       
-      <span class="text-sm text-gray-600 ml-2">
-        — <%= number_with_delimiter(@entries.total_count) %> <%= "result".pluralize(@entries.total_count) %> found
-      </span>
+      <% if defined?(@entries) && @entries.respond_to?(:total_count) %>
+        <span class="text-sm text-gray-600 ml-2">
+          — <%= number_with_delimiter(@entries.total_count) %> <%= "result".pluralize(@entries.total_count) %> found
+        </span>
+      <% end %>
       
       <%= link_to "Clear All Filters",
           entries_path(query: params[:query]),
