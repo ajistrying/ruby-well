@@ -1,5 +1,5 @@
 class FetchAllFeedsJob < ApplicationJob
-  queue_as :feeds
+  queue_as :default
 
   def perform(options = {})
     # Options for controlling the fetch

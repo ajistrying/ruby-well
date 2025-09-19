@@ -1,5 +1,5 @@
 class FetchSingleFeedJob < ApplicationJob
-  queue_as :feeds
+  queue_as :default
 
   # Retry with exponential backoff
   retry_on StandardError, wait: :exponentially_longer, attempts: 3
