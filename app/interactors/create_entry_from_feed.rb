@@ -57,7 +57,7 @@ class CreateEntryFromFeed
 
     # Check for meaningful title (not just whitespace or common placeholders)
     title = context.entry_data[:title].to_s.strip
-    if title.blank? || title.downcase.in?(['no title', 'untitled', 'article', ''])
+    if title.blank? || title.downcase.in?([ "no title", "untitled", "article", "" ])
       # Skip this entry instead of failing - it's not an error, just not worth storing
       Rails.logger.info "Skipping entry without meaningful title: URL=#{context.entry_data[:url]}"
       context.skipped = true

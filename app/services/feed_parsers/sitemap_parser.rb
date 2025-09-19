@@ -93,7 +93,7 @@ module FeedParsers
 
       # Get the last segment
       slug = path.split("/").last
-      
+
       # Return nil if we can't extract a meaningful slug
       return nil if slug.blank? || slug.match?(/^\d+$/) || slug.length < 3
 
@@ -104,10 +104,10 @@ module FeedParsers
         .split
         .map(&:capitalize)
         .join(" ")
-      
+
       # Return nil if the resulting title is too generic or short
-      return nil if title.blank? || title.length < 3 || title.downcase.in?(['index', 'home', 'page', 'post', 'article'])
-      
+      return nil if title.blank? || title.length < 3 || title.downcase.in?([ "index", "home", "page", "post", "article" ])
+
       title
     rescue
       nil
