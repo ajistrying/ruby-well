@@ -19,4 +19,10 @@ Rails.application.routes.draw do
   end
 
   resources :feedbacks, only: [ :new, :create ]
+
+  resources :trending_repos, only: [ :index, :show ] do
+    collection do
+      post :refresh
+    end
+  end
 end

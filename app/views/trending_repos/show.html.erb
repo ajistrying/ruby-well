@@ -1,0 +1,159 @@
+<div class="min-h-screen">
+  <div class="container mx-auto px-4 py-8">
+    <div class="max-w-4xl mx-auto">
+      <!-- Back Button -->
+      <%= link_to trending_repos_path, class: "btn btn-ghost btn-sm mb-4" do %>
+        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+        Back to Trending
+      <% end %>
+
+      <!-- Repository Card -->
+      <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+          <div class="flex items-start justify-between mb-4">
+            <h1 class="card-title text-3xl">
+              <%= link_to @repo.github_url, 
+                  target: "_blank",
+                  rel: "noopener",
+                  class: "link link-hover flex items-center gap-2" do %>
+                <span class="text-gray-600"><%= @repo.owner %></span>
+                <span>/</span>
+                <span class="font-bold"><%= @repo.name %></span>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                </svg>
+              <% end %>
+            </h1>
+            <div class="badge badge-primary badge-lg">
+              <%= @repo.trending_position %>
+            </div>
+          </div>
+
+          <% if @repo.description.present? %>
+            <p class="text-lg text-gray-600 mb-6">
+              <%= @repo.description %>
+            </p>
+          <% end %>
+
+          <!-- Stats Grid -->
+          <div class="stats stats-horizontal shadow w-full mb-6">
+            <div class="stat">
+              <div class="stat-figure text-primary">
+                <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                </svg>
+              </div>
+              <div class="stat-title">Total Stars</div>
+              <div class="stat-value text-primary"><%= number_with_delimiter(@repo.total_stars) %></div>
+              <% if @repo.stars_today > 0 %>
+                <div class="stat-desc text-success">+<%= @repo.stars_today %> today</div>
+              <% end %>
+            </div>
+            
+            <div class="stat">
+              <div class="stat-figure text-secondary">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m9.032 4.024a9.663 9.663 0 01-2.38.313c-.51 0-1.008-.033-1.496-.093m3.876-.406a9.04 9.04 0 01-3.876.406m3.876-.406c.893-.448 1.685-1.058 2.334-1.795M15.716 13.342a3 3 0 00-5.432 0"/>
+                </svg>
+              </div>
+              <div class="stat-title">Forks</div>
+              <div class="stat-value text-secondary"><%= number_with_delimiter(@repo.forks) %></div>
+            </div>
+            
+            <div class="stat">
+              <div class="stat-figure text-info">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+                </svg>
+              </div>
+              <div class="stat-title">Language</div>
+              <div class="stat-value text-info text-2xl"><%= @repo.language %></div>
+            </div>
+          </div>
+
+          <!-- Contributors -->
+          <% if @repo.contributors.any? %>
+            <div class="mb-6">
+              <h3 class="text-lg font-semibold mb-3">Contributors</h3>
+              <div class="flex flex-wrap gap-2">
+                <% @repo.contributors.each do |contributor| %>
+                  <div class="tooltip" data-tip="<%= contributor['username'] %>">
+                    <div class="avatar">
+                      <div class="w-12 rounded-full">
+                        <img src="<%= contributor['avatar_url'] %>" 
+                             alt="<%= contributor['username'] %>" />
+                      </div>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+
+          <!-- Trending Info -->
+          <div class="alert alert-info">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <div>
+              <h3 class="font-bold">Trending Information</h3>
+              <p class="text-sm">
+                This repository was trending on <%= @repo.trending_date.strftime("%B %d, %Y") %>
+                at position <%= @repo.position %>.
+              </p>
+            </div>
+          </div>
+
+          <!-- Historical Trending Data -->
+          <% if @history && @history.size > 1 %>
+            <div class="mt-6">
+              <h3 class="text-lg font-semibold mb-3">Trending History</h3>
+              <div class="overflow-x-auto">
+                <table class="table table-compact w-full">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Position</th>
+                      <th>Total Stars</th>
+                      <th>Stars Gained</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% @history.limit(10).each do |historical| %>
+                      <tr class="<%= 'font-bold' if historical.id == @repo.id %>">
+                        <td><%= historical.trending_date.strftime("%m/%d/%Y") %></td>
+                        <td>
+                          <span class="badge badge-sm <%= 'badge-primary' if historical.id == @repo.id %>">
+                            #<%= historical.position %>
+                          </span>
+                        </td>
+                        <td><%= number_with_delimiter(historical.total_stars) %></td>
+                        <td>
+                          <% if historical.stars_today > 0 %>
+                            <span class="text-success">+<%= historical.stars_today %></span>
+                          <% else %>
+                            -
+                          <% end %>
+                        </td>
+                      </tr>
+                    <% end %>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          <% end %>
+
+          <!-- Action Buttons -->
+          <div class="card-actions justify-end mt-6">
+            <%= link_to "View on GitHub", @repo.github_url, 
+                target: "_blank",
+                rel: "noopener",
+                class: "btn btn-primary" %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

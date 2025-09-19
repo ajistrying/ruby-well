@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_14_120000) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_17_190415) do
   create_table "entries", force: :cascade do |t|
     t.integer "feed_id", null: false
     t.string "title", null: false
@@ -68,6 +68,28 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_14_120000) do
     t.index [ "category" ], name: "index_feeds_on_category"
     t.index [ "feed_url" ], name: "index_feeds_on_feed_url", unique: true
     t.index [ "last_fetched_at" ], name: "index_feeds_on_last_fetched_at"
+  end
+
+  create_table "trending_repos", force: :cascade do |t|
+    t.string "github_id", null: false
+    t.string "name", null: false
+    t.string "owner", null: false
+    t.string "full_name", null: false
+    t.text "description"
+    t.string "url", null: false
+    t.integer "stars_today", default: 0
+    t.integer "total_stars", default: 0
+    t.integer "forks", default: 0
+    t.string "language"
+    t.date "trending_date", null: false
+    t.integer "position"
+    t.json "contributors", default: []
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index [ "github_id", "trending_date" ], name: "index_trending_repos_on_github_id_and_trending_date", unique: true
+    t.index [ "github_id" ], name: "index_trending_repos_on_github_id"
+    t.index [ "trending_date", "position" ], name: "index_trending_repos_on_trending_date_and_position"
+    t.index [ "trending_date" ], name: "index_trending_repos_on_trending_date"
   end
 
   add_foreign_key "entries", "feeds"

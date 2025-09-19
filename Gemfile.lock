@@ -507,6 +507,7 @@ DEPENDENCIES
   kaminari
   langchainrb (~> 0.19.5)
   loofah
+  nokogiri
   overmind (~> 2.5)
   propshaft
   pry-byebug

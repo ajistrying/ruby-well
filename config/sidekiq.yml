@@ -1,0 +1,20 @@
+---
+# Sidekiq configuration
+:concurrency: 5
+:max_retries: 3
+
+# Queue configuration
+:queues:
+  - critical
+  - default
+  - low
+
+# Set timeout to 8 hours
+:timeout: 28800
+
+# Logging
+:verbose: true
+
+# Redis configuration (optional, defaults to localhost:6379)
+# :redis:
+#   url: redis://localhost:6379/0

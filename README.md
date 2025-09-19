@@ -11,6 +11,7 @@ The Ruby community produces incredible content every day - from in-depth technic
 RubyWell solves this by:
 
 - **Aggregating** content from 400+ Ruby blogs, podcasts, and newsletters
+- **Tracking** trending GitHub Ruby repositories daily
 - **Organizing** everything by source type (personal blogs, company engineering blogs, podcasts, newsletters)  
 - **Providing** intelligent search and filtering to find exactly what you need
 - **Staying current** with automatic feed monitoring and content updates
@@ -24,6 +25,7 @@ RubyWell solves this by:
 - **Community Resources** (38 sources) - Ruby community sites and collaborative blogs
 - **Newsletters** (14 sources) - Curated Ruby content delivered regularly
 - **Podcasts** (5 sources) - Audio content from Ruby thought leaders
+- **GitHub Trending** - Daily tracking of trending Ruby repositories with stars, forks, and contributors
 
 ### 📡 Smart Aggregation
 
@@ -36,12 +38,12 @@ RubyWell uses intelligent parsing to handle the diverse landscape of web feeds:
 
 ### 🔍 Content Discovery
 
-*(Coming Soon)*
+- **GitHub Trending** - Daily updated trending Ruby repositories with historical tracking
 - **Full-text search** across all aggregated content
 - **Tag-based filtering** for topics like Rails, testing, deployment
 - **Category browsing** by content type and source
-- **Trending content** based on community engagement
-- **Personalized recommendations** based on reading history
+- **Date-based filtering** for viewing historical trending data
+- *(Coming Soon)* **Personalized recommendations** based on reading history
 
 ## 🛠️ Technology Stack
 
@@ -49,7 +51,9 @@ RubyWell uses intelligent parsing to handle the diverse landscape of web feeds:
 - **Rails 8** - Modern Rails with the latest features
 - **Interactor Pattern** - Clean business logic organization
 - **Sidekiq** - Background job processing for feed fetching
+- **Sidekiq-Cron** - Scheduled daily jobs for trending repos
 - **Feedjira** - Robust RSS/Atom feed parsing
+- **Nokogiri** - HTML parsing for GitHub trending scraper
 - **Faraday** - HTTP client with retry logic and timeouts
 
 ### Data Management
@@ -113,11 +117,26 @@ rake feeds:import_opml[path/to/feeds.opml]
 rake feeds:errors
 ```
 
+### GitHub Trending
+
+```bash
+# Fetch latest trending repos
+rake trending:fetch
+
+# View current trending repos
+rake trending:show
+
+# Check trending statistics
+rake trending:stats
+```
+
 ## 📊 Current Stats
 
 - **421 Active Feeds** across all categories
+- **Daily GitHub Trending** tracking top 25 Ruby repositories
 - **Intelligent Parsing** handles 92% of feeds automatically
 - **Background Processing** for scalable content fetching
+- **Historical Tracking** stores 30 days of trending data
 - **Duplicate Prevention** ensures clean, unique content
 - **Error Recovery** with automatic retry and fallback strategies
 
