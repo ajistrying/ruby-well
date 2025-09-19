@@ -2,7 +2,8 @@ class CreateEntryFromFeed
   include Interactor
 
   def call
-    validate_inputs!
+    # Validate inputs - returns false if entry should be skipped
+    return unless validate_inputs!
 
     # Check for duplicate entry
     if duplicate_entry_exists?
@@ -49,9 +50,24 @@ class CreateEntryFromFeed
       context.fail!(error: "Entry data is required")
     end
 
-    unless context.entry_data[:title].present? && context.entry_data[:url].present?
-      context.fail!(error: "Entry must have title and URL")
+    # Check for URL presence
+    unless context.entry_data[:url].present?
+      context.fail!(error: "Entry must have a URL")
     end
+
+    # Check for meaningful title (not just whitespace or common placeholders)
+    title = context.entry_data[:title].to_s.strip
+    if title.blank? || title.downcase.in?(['no title', 'untitled', 'article', ''])
+      # Skip this entry instead of failing - it's not an error, just not worth storing
+      Rails.logger.info "Skipping entry without meaningful title: URL=#{context.entry_data[:url]}"
+      context.skipped = true
+      context.message = "Entry skipped: no meaningful title found"
+      return false
+    end
+
+    # Store the cleaned title back
+    context.entry_data[:title] = title
+    true
   end
 
   def duplicate_entry_exists?

@@ -20,12 +20,15 @@ class ProcessFeedEntries
             entry_data: entry_data,
             message: result.message
           }
+          # Log skipped entries for monitoring
+          Rails.logger.info "Entry skipped for feed '#{context.feed.name}': #{result.message}"
         end
       else
         context.failed_entries << {
           entry_data: entry_data,
           error: result.error
         }
+        Rails.logger.warn "Failed to create entry for feed '#{context.feed.name}': #{result.error}"
       end
     end
 
