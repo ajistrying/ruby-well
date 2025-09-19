@@ -55,8 +55,15 @@ module FeedParsers
         # Try to filter for blog/article URLs
         next unless looks_like_article?(loc)
 
+        # Extract title from URL - skip if we can't get a meaningful title
+        title = extract_title_from_url(loc)
+        if title.nil?
+          Rails.logger.debug "Skipping sitemap entry without meaningful title: #{loc}"
+          next
+        end
+
         urls << {
-          title: extract_title_from_url(loc),
+          title: title,
           url: loc,
           guid: loc,
           summary: nil,
@@ -86,17 +93,24 @@ module FeedParsers
 
       # Get the last segment
       slug = path.split("/").last
-      return "Article" if slug.blank?
+
+      # Return nil if we can't extract a meaningful slug
+      return nil if slug.blank? || slug.match?(/^\d+$/) || slug.length < 3
 
       # Convert slug to title
-      slug
+      title = slug
         .gsub(/[-_]/, " ")
         .gsub(/\.html?$/i, "")
         .split
         .map(&:capitalize)
         .join(" ")
+
+      # Return nil if the resulting title is too generic or short
+      return nil if title.blank? || title.length < 3 || title.downcase.in?([ "index", "home", "page", "post", "article" ])
+
+      title
     rescue
-      "Article"
+      nil
     end
 
     def extract_site_url

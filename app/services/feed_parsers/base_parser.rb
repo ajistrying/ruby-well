@@ -30,7 +30,17 @@ module FeedParsers
 
     def sanitize_text(text)
       return nil if text.blank?
-      text.to_s.strip
+
+      # Clean and normalize the text
+      cleaned = text.to_s.strip
+
+      # Return nil if the result is empty or just whitespace
+      return nil if cleaned.blank?
+
+      # Return nil for common placeholder titles that aren't meaningful
+      return nil if cleaned.downcase.in?([ "no title", "untitled", "(no title)", "[untitled]" ])
+
+      cleaned
     end
 
     def sanitize_html(html)
